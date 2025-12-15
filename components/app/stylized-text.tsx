@@ -1,7 +1,7 @@
 "use client";
 
 import type { StylizedTextPatterns } from "@/components/app/stylized-text-patterns";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 export default function StylizedText({ text, textStyle }: { text: string; textStyle: StylizedTextPatterns }) {
   const nodes: ReactNode[] = [];
@@ -9,6 +9,7 @@ export default function StylizedText({ text, textStyle }: { text: string; textSt
   let buffer = "";
   let i = 0;
   const len = text.length;
+  let nodeCount = 0;
 
   while (i < len) {
     const char = text[i];
@@ -59,7 +60,7 @@ export default function StylizedText({ text, textStyle }: { text: string; textSt
 
         if (j < len && text.slice(j, j + end.length) === end) {
           if (buffer) nodes.push(buffer);
-          nodes.push(textStyle.styles[key]({ children: content, params }));
+          nodes.push(<Fragment key={nodeCount++}>{textStyle.styles[key]({ children: content, params })}</Fragment>);
           buffer = "";
           i = j + end.length;
           matched = true;
