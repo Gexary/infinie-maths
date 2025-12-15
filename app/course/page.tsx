@@ -8,9 +8,13 @@ import { useEffect, useRef, useState } from "react";
 import { StylizedTextPatterns } from "@/components/app/stylized-text-patterns";
 import StylizedText from "@/components/app/stylized-text";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import PDFViewer from "@/components/app/pdf-viewer";
 import Header from "@/components/app/header";
 import Footer from "@/components/app/footer";
+import dynamic from "next/dynamic";
+
+const PDFViewer = dynamic(() => import("@/components/app/pdf-viewer"), {
+  ssr: false,
+});
 
 const stylizedTextStyle = new StylizedTextPatterns({
   "** **": ({ children, params }) => (
