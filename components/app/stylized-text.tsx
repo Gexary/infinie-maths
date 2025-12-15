@@ -1,67 +1,80 @@
 "use client";
 
-import type { StylizedTextPatterns } from "@/components/app/stylized-text-patterns";
 import { Fragment, type ReactNode } from "react";
+
+export type StyleRenderer = (props: { children: string; params?: string }) => ReactNode;
+
+export type StyleMap = Record<string, StyleRenderer>;
+
+export class StylizedTextPatterns {
+  patternMap: Map<string, { end: string; key: string }>;
+  styles: StyleMap;
+
+  constructor(styleMap: StyleMap) {
+    this.styles = styleMap;
+    this.patternMap = new Map();
+    for (const key of Object.keys(styleMap)) {
+      const [start, end] = key.split(" ");
+      this.patternMap.set(start, { end, key });
+    }
+  }
+}
 
 export default function StylizedText({ text, textStyle }: { text: string; textStyle: StylizedTextPatterns }) {
   const nodes: ReactNode[] = [];
-
-  let buffer = "";
-  let i = 0;
   const len = text.length;
+  let buffer: string[] = [];
   let nodeCount = 0;
 
+  let i = 0;
   while (i < len) {
     const char = text[i];
 
     if (char === "\\") {
-      i++;
-      if (i < len) buffer += text[i];
-      i++;
+      if (i + 1 < len) buffer.push(text[i + 1]);
+      i += 2;
       continue;
     }
 
     let matched = false;
 
-    for (const { start, end, key } of textStyle.patterns) {
-      if (text.slice(i, i + start.length) === start) {
+    for (const [start, { end, key }] of textStyle.patternMap.entries()) {
+      if (text.startsWith(start, i)) {
         let j = i + start.length;
         let params: string | undefined;
-        let content = "";
+        const contentArr: string[] = [];
 
         if (text[j] === "(") {
           j++;
-          let paramBuffer = "";
+          const paramArr: string[] = [];
           while (j < len && text[j] !== ")") {
             if (text[j] === "\\" && j + 1 < len) {
-              paramBuffer += text[j + 1];
+              paramArr.push(text[j + 1]);
               j += 2;
             } else {
-              paramBuffer += text[j];
+              paramArr.push(text[j]);
               j++;
             }
           }
-          if (j < len && text[j] === ")") {
-            params = paramBuffer;
-            j++;
-          }
+          if (j < len && text[j] === ")") j++;
+          params = paramArr.join("");
         }
 
         while (j < len) {
-          if (text.slice(j, j + end.length) === end && text[j - 1] !== "\\") break;
+          if (text.startsWith(end, j) && text[j - 1] !== "\\") break;
           if (text[j] === "\\" && j + 1 < len) {
-            content += text[j + 1];
+            contentArr.push(text[j + 1]);
             j += 2;
           } else {
-            content += text[j];
+            contentArr.push(text[j]);
             j++;
           }
         }
 
-        if (j < len && text.slice(j, j + end.length) === end) {
-          if (buffer) nodes.push(buffer);
-          nodes.push(<Fragment key={nodeCount++}>{textStyle.styles[key]({ children: content, params })}</Fragment>);
-          buffer = "";
+        if (text.startsWith(end, j)) {
+          if (buffer.length) nodes.push(buffer.join(""));
+          nodes.push(<Fragment key={nodeCount++}>{textStyle.styles[key]({ children: contentArr.join(""), params })}</Fragment>);
+          buffer = [];
           i = j + end.length;
           matched = true;
           break;
@@ -70,12 +83,12 @@ export default function StylizedText({ text, textStyle }: { text: string; textSt
     }
 
     if (!matched) {
-      buffer += char;
+      buffer.push(char);
       i++;
     }
   }
 
-  if (buffer) nodes.push(buffer);
+  if (buffer.length) nodes.push(buffer.join(""));
 
   return <>{nodes}</>;
 }

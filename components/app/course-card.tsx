@@ -17,7 +17,7 @@ export default function CourseCard({ i }: { i: number }) {
       <h1 className="text-lg font-medium group-hover:text-blue-400">Trinôme du second degré</h1>
       <p className="text-sm leading-relaxed mt-2">Étude des fonctions du second degré : forme canonique, signe, variations, résolution d'équations et d'inéquations.</p>
       <div className="mt-4 flex flex-row gap-2 flex-wrap">
-        <Link href="" className="bg-blue-500 border border-blue-400 hover:border-blue-300 text-gray-950 font-medium text-sm rounded-full text-nowrap px-3 py-0.5">
+        <Link href="/course" className="bg-blue-500 border border-blue-400 hover:border-blue-300 text-gray-950 font-medium text-sm rounded-full text-nowrap px-3 py-0.5">
           Cours et exercices
         </Link>
         <Link href="" className="bg-blue-500 border border-blue-400 hover:border-blue-300 text-gray-950 font-medium text-sm rounded-full text-nowrap px-3 py-0.5">

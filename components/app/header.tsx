@@ -1,10 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, StarIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { FaStar } from "react-icons/fa";
 
 interface NavLinkProps {
   href: string;
@@ -21,6 +22,7 @@ const navLinks: NavLinkProps[] = [
   {
     href: "/seconde",
     name: "Seconde",
+    active: true,
   },
   {
     href: "/premiere",
@@ -29,11 +31,11 @@ const navLinks: NavLinkProps[] = [
   {
     href: "/terminale",
     name: "Terminale",
-    active: true,
   },
   {
     href: "/premium",
     name: "Pass Premium",
+    // icon: <FaStar />
   },
 ];
 
@@ -90,10 +92,12 @@ export default function Header() {
             <Link
               key={link.name}
               href={link.href}
-              className={cn("hover:text-white/80 hover:underline px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
+              className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
                 "text-primary border-primary": link.active,
+                "text-yellow-500 border-yellow-500": link.href === "/premium",
               })}
             >
+              {link.href === "/premium" ? <FaStar className="size-4" /> : null}
               {link.name}
             </Link>
           ))}
