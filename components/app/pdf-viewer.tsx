@@ -1,7 +1,7 @@
 "use client";
 
-import { FilesIcon, ArrowLeftIcon, ArrowRightIcon, DownloadIcon, PrinterIcon } from "lucide-react";
-import React, { useState } from "react";
+import { FilesIcon, ArrowLeftIcon, ArrowRightIcon, DownloadIcon, PrinterIcon, XIcon } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -12,6 +12,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 export default function PDFViewer() {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
+
   const [viewMode, setViewMode] = useState("page"); // 'list' ou 'page'
 
   const pdfFile = "/chapitre-1-cours.pdf";
@@ -33,9 +34,68 @@ export default function PDFViewer() {
     changePage(1);
   }
 
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [width, setWidth] = useState(800);
+
+  const pdfRef = useRef<HTMLDivElement>(null);
+
+  const resizeObserver = useRef<ResizeObserver>(
+    new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newWidth = entry.contentRect.width;
+        const newHeight = entry.contentRect.height;
+        setWidth(newWidth);
+      }
+    })
+  );
+
+  useEffect(() => {
+    if (pdfRef.current) resizeObserver.current.observe(pdfRef.current);
+    return () => {
+      resizeObserver.current.disconnect();
+    };
+  }, [pdfRef]);
+
+  const [pdfWidth, setPdfWidth] = useState(1000);
+  useEffect(() => {
+    if (!window) return;
+    const windowWidth = window.innerWidth;
+    if (pdfWidth > windowWidth) {
+      setPdfWidth(windowWidth - 16);
+    }
+  }, []);
+  const [fullscreen, setFullscreen] = useState(false);
+
+  if (fullscreen)
+    return (
+      <div className="fixed top-0 left-0 z-10000 w-screen h-screen bg-black/80">
+        <div className="absolute top-4 right-4 flex flex-row items-center gap-2">
+          <button onClick={() => setIsZoomed((prevZoomed) => !prevZoomed)} className="size-9 flex flex-row items-center justify-center rounded-md font-medium text-sm border cursor-pointer bg-gray-800 transition-colors border-gray-700">
+            <DownloadIcon className="size-4" />
+          </button>
+          <button className="size-9 flex flex-row items-center justify-center rounded-md font-medium text-sm border cursor-pointer bg-gray-800 transition-colors border-gray-700">
+            <PrinterIcon className="size-4" />
+          </button>
+        </div>
+        <div
+          className="overflow-y-scroll w-full max-h-full flex flex-col items-center justify-start"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setFullscreen(false);
+            console.log(e.target, e.currentTarget);
+          }}
+        >
+          <Document onLoadSuccess={onDocumentLoadSuccess} file={pdfFile} className="mt-8 select-none flex flex-col items-center gap-4 w-fit">
+            {Array.from(new Array(numPages), (_, index) => (
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} width={pdfWidth} renderTextLayer={false} renderAnnotationLayer={true} className="shadow-md pointer-events-none" />
+            ))}
+          </Document>
+        </div>
+      </div>
+    );
+
   return (
     <div className="w-full">
-      <div className="mb-4 flex flex-row items-center justify-between gap-2 mt-4">
+      <div className="mb-4 flex flex-row items-center justify-between gap-2">
         <h1 className="text-white text-2xl font-bold">Cours</h1>
         <div className="flex flex-row items-center gap-2">
           <button
@@ -44,7 +104,7 @@ export default function PDFViewer() {
           >
             Mode Liste <FilesIcon className="size-4" />
           </button>
-          <button className="size-9 flex flex-row items-center justify-center rounded-md font-medium text-sm border cursor-pointer bg-gray-800 transition-colors border-gray-700">
+          <button onClick={() => setIsZoomed((prevZoomed) => !prevZoomed)} className="size-9 flex flex-row items-center justify-center rounded-md font-medium text-sm border cursor-pointer bg-gray-800 transition-colors border-gray-700">
             <DownloadIcon className="size-4" />
           </button>
           <button className="size-9 flex flex-row items-center justify-center rounded-md font-medium text-sm border cursor-pointer bg-gray-800 transition-colors border-gray-700">
@@ -52,42 +112,44 @@ export default function PDFViewer() {
           </button>
         </div>
       </div>
-      <div className="w-full overflow-auto select-none pointer-events-none">
-        <Document
-          file={pdfFile}
-          onLoadSuccess={onDocumentLoadSuccess}
-          loading={
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600 font-medium">Chargement du PDF...</p>
+      <div className="overflow-hidden" ref={pdfRef}>
+        <div className={`w-full overflow-auto ${isZoomed ? "fixed top-0 left-0" : "relative"} transition-all duration-200 ease-in-out`}>
+          <Document
+            file={pdfFile}
+            onLoadSuccess={onDocumentLoadSuccess}
+            loading={
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600 font-medium">Chargement du PDF...</p>
+                </div>
               </div>
-            </div>
-          }
-          error={
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center text-red-600">
-                <p className="text-xl font-bold mb-2">❌ Erreur</p>
-                <p>Impossible de charger le PDF</p>
+            }
+            error={
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-red-600 flex flex-col items-center justify-center">
+                  <p className="text-xl font-bold mb-2 flex items-center gap-2">
+                    <XIcon className="size-8" /> Erreur
+                  </p>
+                  <p className="text-center">Impossible de charger le PDF</p>
+                </div>
               </div>
-            </div>
-          }
-          className="flex flex-col items-center gap-4 w-full"
-        >
-          {viewMode === "list" ? (
-            numPages &&
-            Array.from(new Array(numPages), (el, index) => (
-              <div key={`page_${index + 1}`} className="border border-gray-300 w-full shadow-md mb-4 overflow-hidden">
-                <Page pageNumber={index + 1} width={1000} renderTextLayer={true} renderAnnotationLayer={true} className={"max-w-full"} />
-                <div className="bg-gray-100 px-4 py-2 text-center text-sm text-gray-600 font-medium">Page {index + 1}</div>
-              </div>
-            ))
-          ) : (
-            <div className="border border-gray-300 shadow-md">
-              <Page pageNumber={pageNumber} width={1000} renderTextLayer={true} renderAnnotationLayer={true} />
-            </div>
-          )}
-        </Document>
+            }
+            className="flex flex-col items-center gap-4 w-full cursor-pointer select-none"
+          >
+            {viewMode === "list" ? (
+              numPages &&
+              Array.from(new Array(numPages), (el, index) => (
+                <div key={`page_${index + 1}`} className="w-full shadow-md mb-4 overflow-hidden">
+                  <Page pageNumber={index + 1} width={width} renderTextLayer={false} renderAnnotationLayer={true} />
+                  <div className="bg-gray-100 px-4 py-2 text-center text-sm text-gray-600 font-medium">Page {index + 1}</div>
+                </div>
+              ))
+            ) : (
+              <Page className="shadow-md" pageNumber={pageNumber} width={width} renderTextLayer={true} renderAnnotationLayer={true} onClick={() => setFullscreen(true)} />
+            )}
+          </Document>
+        </div>
       </div>
       <div className="w-full flex flex-row justify-center mt-8">
         {numPages ? (

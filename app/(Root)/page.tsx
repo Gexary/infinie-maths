@@ -34,7 +34,7 @@ const description =
 export default function Page() {
   return (
     <>
-      <div className="p-8 bg-white rounded-xl text-gray-950 mt-16 grid grid-cols-[1fr_512px] gap-8">
+      <div className="p-6 md:p-8 bg-white rounded-xl text-gray-950 mt-16 grid grid-cols-1 md:grid-cols-[1fr_512px] gap-8">
         <div className="max-w-xl">
           <h1 className="text-3xl font-bold">Ton espace de maths dédié au lycée.</h1>
           <p className="text-base mt-2 leading-relaxed text-gray-800">Des cours simples, des exercices corrigés et des entraînements ciblés pour réussir en Seconde, Première et Terminale, à ton rythme.</p>
@@ -47,7 +47,7 @@ export default function Page() {
             </Link>
           </div>
         </div>
-        <div className="bg-gray-950 rounded-xl text-white p-6">
+        <div className="bg-gray-950 rounded-xl text-white p-4 md:p-6">
           <h1 className="text-xl font-bold">Comment fonctionne InfinieMaths</h1>
           <p className="text-base mt-2 leading-relaxed text-gray-200">
             Tu choisis ton niveau (Seconde, Première, Terminale). Tu suis un parcours structuré, chapitre par chapitre. Tu t’entraînes avec des exercices corrigés étape par étape. Tu arrives en contrôle ou au Bac en ayant déjà vu l’essentiel.
@@ -77,7 +77,7 @@ export default function Page() {
               <h1 className="text-lg font-medium group-hover:text-blue-400">Première</h1>
               <p className="text-sm leading-relaxed mt-2">Étude des fonctions du second degré : forme canonique, signe, variations, résolution d'équations et d'inéquations.</p>
               <div className="mt-4 flex flex-row gap-2 flex-wrap">
-                <Link href="" className="bg-orange-500 border border-white/20 text-gray-950 font-medium text-base rounded-full text-nowrap px-8 py-2">
+                <Link href="/premiere" className="bg-orange-500 border border-white/20 text-gray-950 font-medium text-base rounded-full text-nowrap px-8 py-2">
                   Accédez à la Première
                 </Link>
               </div>

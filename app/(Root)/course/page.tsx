@@ -2,10 +2,11 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { CheckIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpRightIcon, CheckIcon, ChevronDownIcon, LockIcon } from "lucide-react";
 import StylizedText, { StylizedTextPatterns } from "@/components/app/stylized-text";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 const PDFViewer = dynamic(() => import("@/components/app/pdf-viewer"), {
   ssr: false,
@@ -19,7 +20,7 @@ const stylizedTextStyle = new StylizedTextPatterns({
     </strong>
   ),
   "{ }": ({ children, params }) => (
-    <span className="text-red-500">
+    <span className="text-blue-500">
       {children}
       {params ? ` (${params})` : ""}
     </span>
@@ -79,38 +80,74 @@ export default function PageHome() {
       <p className="text-base leading-relaxed mt-2">
         <StylizedText text={"Étude des fonctions du second degré : forme canonique, signe, variations, résolution d'équations et d'inéquations."} textStyle={stylizedTextStyle} />
       </p>
-      <div className="grid grid-cols-[var(--container-xs)_1fr] gap-16 mt-8">
-        <div>
-          <h1 className="text-white text-2xl font-bold">Chapitres</h1>
-          <div className="flex flex-col gap-2 mt-4 w-full bg-gray-950 p-2 md:p-4 border rounded-md border-gray-800 transition-colors duration-200 ease-in-out">
-            {Array(12)
-              .fill(0)
-              .map((_, i) => (
-                <h1
-                  key={i}
-                  className={cn("w-full text-base font-normal cursor-pointer hover:text-blue-400 flex flex-row items-center gap-2 justify-between", {
-                    "border-b border-gray-800 pb-2": i !== 11,
-                  })}
-                >
-                  <div>
-                    <span className="text-white/60 text-sm">{i + 1} - </span>
-                    Trinôme du second degré
-                  </div>
-                  {i === 5 ? (
-                    <span className="ml-auto size-4 bg-blue-500 text-gray-950 rounded-full inline-flex items-center justify-center">
-                      <CheckIcon strokeWidth={2.5} size={14} />
-                    </span>
-                  ) : null}
-                </h1>
-              ))}
-          </div>
-        </div>
-        <div>
-          <div className="w-full overflow-hidden">
-            <PDFViewer />
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-8 mt-8">
+        <ChapterList />
+        <div className="w-full">
+          <PDFViewer />
         </div>
       </div>
     </>
+  );
+}
+
+interface ChapterProps {
+  title: string;
+  slug: string;
+  active?: boolean;
+}
+
+const chapters: ChapterProps[] = [
+  { title: "Trinôme du second degré", slug: "0" },
+  { title: "Probabilité conditionnelle et variable aléatoire", slug: "1" },
+  { title: "Dérivation", slug: "2", active: true },
+  { title: "Suites numériques", slug: "3" },
+];
+
+function ChapterList() {
+  const [collapsed, setCollapsed] = useState(false);
+  const toggleCollapsed = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setCollapsed((prev) => {
+      const newValue = !prev;
+      if (chapterRef.current) {
+        if (chapterRef.current && newValue) {
+          chapterRef.current.style.maxHeight = `${chapterRef.current.scrollHeight}px`;
+          setTimeout(() => {
+            if (chapterRef.current) chapterRef.current.style.maxHeight = `0px`;
+          }, 10);
+        } else if (chapterRef.current) {
+          chapterRef.current.style.maxHeight = `0px`;
+          setTimeout(() => {
+            if (chapterRef.current) chapterRef.current.style.maxHeight = `${chapterRef.current.scrollHeight}px`;
+          }, 10);
+        }
+      }
+      return newValue;
+    });
+  };
+
+  const chapterRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div className="max-w-full relative z-10 lg:max-w-xs h-fit overflow-hidden bg-gray-950 rounded-md border border-gray-800">
+      <div className="w-full">
+        <div className="shadow-[0_1px_0_0_var(--color-gray-800)] flex items-center justify-between text-blue-500 px-6 py-4 bg-blue-500/10">
+          <h2 className="font-semibold text-lg">Chapitres</h2>
+          {/* <Link className="flex items-center justify-center size-8 rounded-md transition hover:bg-blue-100/5 cursor-pointer" href="/">
+            <ArrowUpRightIcon className="size-5" />
+          </Link> */}
+          <button onClick={toggleCollapsed} className="flex items-center justify-center size-8 rounded-md transition hover:bg-blue-100/5 cursor-pointer">
+            <ChevronDownIcon className={`size-5 transition-transform duration-300 ease-in-out ${collapsed ? "rotate-180" : ""}`} />
+          </button>
+        </div>
+        <div ref={chapterRef} className="divide-y divide-gray-800 transition-all duration-1000 ease-in-out overflow-hidden">
+          {chapters.map(({ slug, title, active }) => (
+            <Link key={slug} className={`block cursor-pointer transition px-6 py-3 ${active ? "bg-blue-500/10" : "hover:bg-gray-900/50"}`} style={{ boxShadow: active ? "inset 2px 0 0 0 var(--color-blue-600)" : "none" }} href={`/seconde/${slug}`}>
+              <p className={`truncate font-medium text-sm ${active ? "text-white" : "text-gray-300"}`}>{title}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
