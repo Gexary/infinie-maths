@@ -20,7 +20,29 @@ export class StylizedTextPatterns {
   }
 }
 
-export default function StylizedText({ text, textStyle }: { text: string; textStyle: StylizedTextPatterns }) {
+const stylizedTextStyle = new StylizedTextPatterns({
+  "** **": ({ children, params }) => (
+    <span className="font-bold">
+      {children}
+      {params ? ` (${params})` : ""}
+    </span>
+  ),
+  // "{ }": ({ children, params }) => (
+  //   <span className="text-red-500">
+  //     {children}
+  //     {params ? ` (${params})` : ""}
+  //   </span>
+  // ),
+  // "% %": ({ children, params }) => (
+  //   <span className="text-green-500">
+  //     {children}
+  //     {params ? ` (${params})` : ""}
+  //   </span>
+  // ),
+  // "$ $": ({ children, params }) => <span className={`text-[${params}]`}>{children}</span>,
+});
+
+export default function StylizedText({ text, textStyle = stylizedTextStyle }: { text: string; textStyle?: StylizedTextPatterns }) {
   const nodes: ReactNode[] = [];
   const len = text.length;
   let buffer: string[] = [];

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { MenuIcon, StarIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 
@@ -11,7 +12,6 @@ interface NavLinkProps {
   href: string;
   name: string;
   icon?: React.ReactNode;
-  active?: boolean;
 }
 
 const navLinks: NavLinkProps[] = [
@@ -20,22 +20,20 @@ const navLinks: NavLinkProps[] = [
     name: "Accueil",
   },
   {
-    href: "/seconde",
+    href: "/niveau/seconde",
     name: "Seconde",
-    active: true,
   },
   {
-    href: "/premiere",
+    href: "/niveau/premiere",
     name: "Première",
   },
   {
-    href: "/terminale",
+    href: "/niveau/terminale",
     name: "Terminale",
   },
   {
     href: "/premium",
     name: "Pass Premium",
-    // icon: <FaStar />
   },
 ];
 
@@ -46,6 +44,9 @@ export default function Header() {
   const scrollDirection = useRef<"up" | "down">("up");
   const lastScrollDate = useRef(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const pathname = usePathname();
+  const isActive = (href: string) => pathname === href;
 
   useEffect(() => {
     const onScroll = () => {
@@ -84,23 +85,26 @@ export default function Header() {
             <Image src="/logo.png" alt="Logo" width={40} height={40} className="size-8" />
             <span className="text-xl font-bold">InfinieMaths</span>
           </div>
-          <span className="text-gray-300 hidden md:inline-block">Les maths du lycée, simplement.</span>
+          <span className="text-gray-300 hidden lg:inline-block">Les maths du lycée, simplement.</span>
         </div>
 
         <div className="flex-row gap-4 items-center hidden md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
-                "text-primary border-primary": link.active,
-                "text-yellow-500 border-yellow-500": link.href === "/premium",
-              })}
-            >
-              {link.href === "/premium" ? <FaStar className="size-4" /> : null}
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
+                  "text-orange-500 border-orange-500": active,
+                  "text-yellow-500 border-yellow-500": link.href === "/premium",
+                })}
+              >
+                {link.href === "/premium" ? <FaStar className="size-4" /> : null}
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
         <div className="block md:hidden">
           <button className="border-none outline-none cursor-pointer size-8 text-2xl bg-transparent hover:bg-white/5 flex flex-row items-center justify-center rounded-md" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
