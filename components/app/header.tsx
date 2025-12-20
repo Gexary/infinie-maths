@@ -112,21 +112,31 @@ export default function Header() {
           </button>
         </div>
       </header>
-      {/* <div className="absolute w-full h-[calc(100vh-4rem)] z-50 bg-red-500 top-auto left-0 p-8">
-        <div className="flex-col gap-4 items-center flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={cn("hover:text-white/80 hover:underline px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
-                "text-primary border-primary": link.active,
-              })}
-            >
-              {link.name}
-            </Link>
-          ))}
+      <div
+        className={cn("fixed w-full z-50 overflow-hidden bg-gray-950/90 backdrop-blur-3xl top-[4rem] left-0 transition-all duration-500 ease-in-out", {
+          "h-0": !mobileMenuOpen,
+          "h-[calc(100vh-4rem)]": mobileMenuOpen,
+        })}
+      >
+        <div className="flex-col gap-4 items-center flex p-8">
+          {navLinks.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
+                  "text-orange-500 border-orange-500": active,
+                  "text-yellow-500 border-yellow-500": link.href === "/premium",
+                })}
+              >
+                {link.href === "/premium" ? <FaStar className="size-4" /> : null}
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
-      </div> */}
+      </div>
     </>
   );
 }

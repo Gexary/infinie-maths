@@ -7,11 +7,11 @@ export interface NoticeProps {
 
 export default function NoticeCard({ title, description }: NoticeProps) {
   return (
-    <div className="p-4 bg-white rounded-xl text-gray-950 mt-16 mb-12 grid grid-cols-1 md:grid-cols-[1fr_512px] gap-8">
-      <div className="p-4">
+    <div className="p-4 bg-white rounded-xl text-gray-950 mt-16 mb-12 grid grid-cols-1 md:grid-cols-[1fr_512px] md:gap-8 gap-6">
+      <div className="md:p-4">
         <h1 className="max-w-2xl text-3xl font-extrabold">{title}</h1>
         <p className="max-w-xl text-base mt-2 leading-relaxed text-gray-800">{description}</p>
-        <div className="mt-8 flex flex-row gap-2 flex-wrap">
+        <div className="md:mt-8 mt-6 flex flex-row gap-2 flex-wrap">
           <Link href="" className="bg-orange-500 border border-white/20 text-gray-950 font-medium text-base rounded-full text-nowrap px-8 py-2">
             Commencer par la Seconde
           </Link>
