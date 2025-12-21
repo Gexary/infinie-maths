@@ -1,30 +1,63 @@
 import Link from "next/link";
+import StylizedText, { StylizedTextPatterns } from "./stylized-text";
 
 export interface NoticeProps {
   title: string;
   description: string;
+  notice: string;
 }
 
-export default function NoticeCard({ title, description }: NoticeProps) {
+const stylizedTextStyle = new StylizedTextPatterns({
+  "# \n": ({ children, params }) => (
+    <h1 className="mb-2 text-xl font-bold">{children}</h1>
+  ),
+  "-- --": ({ children, params }) => {
+    const listElements = children
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    return (
+      <ul className="flex list-outside list-disc flex-col gap-1 pl-4">
+        {listElements.map((line, i) => (
+          <li className="text-sm leading-relaxed text-gray-300" key={i}>
+            {line}
+          </li>
+        ))}
+      </ul>
+    );
+  },
+});
+
+export default function NoticeCard({
+  title,
+  description,
+  notice,
+}: NoticeProps) {
   return (
-    <div className="p-4 bg-white rounded-xl text-gray-950 mt-16 mb-12 grid grid-cols-1 md:grid-cols-[1fr_512px] md:gap-8 gap-6">
+    <div className="mb-12 flex flex-col flex-wrap justify-between gap-6 rounded-xl bg-white p-4 text-gray-950 md:flex-row md:gap-8">
       <div className="md:p-4">
         <h1 className="max-w-2xl text-3xl font-extrabold">{title}</h1>
-        <p className="max-w-xl text-base mt-2 leading-relaxed text-gray-800">{description}</p>
-        <div className="md:mt-8 mt-6 flex flex-row gap-2 flex-wrap">
-          <Link href="" className="bg-orange-500 border border-white/20 text-gray-950 font-medium text-base rounded-full text-nowrap px-8 py-2">
+        <p className="mt-2 max-w-xl text-base leading-relaxed text-gray-800">
+          {description}
+        </p>
+        <div className="mt-6 flex flex-row flex-wrap gap-2 md:mt-8">
+          <Link
+            href=""
+            className="rounded-full border border-white/20 bg-orange-500 px-8 py-2 text-base font-medium text-nowrap text-gray-950"
+          >
             Commencer par la Seconde
           </Link>
-          <Link href="" className="bg-orange-500 border border-white/20 text-gray-950 font-medium text-base rounded-full text-nowrap px-8 py-2">
+          <Link
+            href=""
+            className="rounded-full border border-white/20 bg-orange-500 px-8 py-2 text-base font-medium text-nowrap text-gray-950"
+          >
             Aller en Première
           </Link>
         </div>
       </div>
-      <div className="bg-gray-950 rounded-xl text-white p-4 md:p-6">
-        <h1 className="text-xl font-bold">Comment fonctionne InfinieMaths</h1>
-        <p className="text-base mt-2 leading-relaxed text-gray-200">
-          Tu choisis ton niveau (Seconde, Première, Terminale). Tu suis un parcours structuré, chapitre par chapitre. Tu t’entraînes avec des exercices corrigés étape par étape. Tu arrives en contrôle ou au Bac en ayant déjà vu l’essentiel.
-        </p>
+      <div className="w-full rounded-xl bg-gray-950 p-4 text-white md:p-6 lg:max-w-md">
+        <StylizedText text={notice} textStyle={stylizedTextStyle} />
       </div>
     </div>
   );

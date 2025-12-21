@@ -1,37 +1,20 @@
 "use client";
 
-import CourseCard from "@/components/app/course-card";
 import NoticeCard from "@/components/app/notice-card";
 import { PremiumPlan } from "@/components/app/premium";
-import StylizedText, { StylizedTextPatterns } from "@/components/app/stylized-text";
+import StylizedText from "@/components/app/stylized-text";
 import { levels, type Level } from "@/core/data";
 import { motion } from "motion/react";
 import Link from "next/link";
 
-const stylizedTextStyle = new StylizedTextPatterns({
-  "** **": ({ children, params }) => (
-    <span className="font-bold">
-      {children}
-      {params ? ` (${params})` : ""}
-    </span>
-  ),
-  // "{ }": ({ children, params }) => (
-  //   <span className="text-red-500">
-  //     {children}
-  //     {params ? ` (${params})` : ""}
-  //   </span>
-  // ),
-  // "% %": ({ children, params }) => (
-  //   <span className="text-green-500">
-  //     {children}
-  //     {params ? ` (${params})` : ""}
-  //   </span>
-  // ),
-  // "$ $": ({ children, params }) => <span className={`text-[${params}]`}>{children}</span>,
-});
-
-const description =
-  "Tu avances pas à pas : chaque notion de cours est suivie immédiatement d'exercices d'application. Commence par **Cours et exercices**, cherche sérieusement, puis utilise **Corrigés** pour comparer ta méthode et progresser en rédaction. Les **vidéos** seront ajoutées progressivement sur les méthodes importantes.";
+const HOME_PAGE_NOTICE = `
+#Comment fonctionne InfinieMaths
+--
+Tu choisis ton niveau (Seconde, Première, Terminale).
+Tu suis un parcours structuré, chapitre par chapitre.
+Tu t'entraînes avec des exercices corrigés étape par étape.
+Tu arrives en contrôle ou au Bac en ayant déjà vu l'essentiel.
+--`;
 
 export default function Page() {
   return (
@@ -39,14 +22,18 @@ export default function Page() {
       <NoticeCard
         {...{
           title: "Ton espace de maths dédié au lycée.",
-          description: "Des cours simples, des exercices corrigés et des entraînements ciblés pour réussir en Seconde, Première et Terminale, à ton rythme.",
+          description:
+            "Des cours simples, des exercices corrigés et des entraînements ciblés pour réussir en Seconde, Première et Terminale, à ton rythme.",
         }}
+        notice={HOME_PAGE_NOTICE}
       />
-      <h1 className="text-white text-center text-3xl font-bold">Choisis ton niveau</h1>
-      <p className="text-sm leading-relaxed mt-4 text-center">
-        <StylizedText text={"Chaque parcours te guide pas à pas, du cours aux exercices corrigés."} textStyle={stylizedTextStyle} />
+      <h1 className="text-center text-3xl font-bold text-white">
+        Choisis ton niveau
+      </h1>
+      <p className="mt-4 text-center text-sm leading-relaxed">
+        <StylizedText text="Chaque parcours te guide pas à pas, du cours aux exercices corrigés." />
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full mt-8 gap-4">
+      <div className="mt-8 grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         {levels.map((level, i) => (
           <LevelCard key={i} i={i} level={level} />
         ))}
@@ -58,11 +45,11 @@ export default function Page() {
   );
 }
 
+const MotionLink = motion(Link);
+
 export function LevelCard({ level, i }: { level: Level; i: number }) {
   return (
-    <motion.div
-      key={i}
-      className="bg-gray-950 group p-6 md:p-8 border rounded-xl border-gray-800 cursor-pointer hover:border-blue-500 transition-colors duration-200 ease-in-out"
+    <MotionLink
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -70,15 +57,21 @@ export function LevelCard({ level, i }: { level: Level; i: number }) {
         duration: 0.3,
         ease: "easeOut",
       }}
+      href="/niveau/premiere"
+      className="group block size-full cursor-pointer flex-col justify-between rounded-xl border border-gray-800 bg-gray-950 p-6 transition-colors duration-200 ease-in-out hover:border-blue-500"
     >
-      <h4 className="text-white/80 text-sm mb-1">Niveau</h4>
-      <h1 className="text-lg font-medium group-hover:text-blue-400">{level.title}</h1>
-      <p className="text-sm leading-relaxed mt-2">{level.description}</p>
-      <div className="mt-4 flex flex-row gap-2 flex-wrap">
-        <Link href="/niveau/premiere" className="bg-orange-500 border border-white/20 text-gray-950 font-medium text-base rounded-full text-nowrap px-8 py-2">
-          Accédez à la {level.title}
-        </Link>
+      <div>
+        <h4 className="mb-1 text-sm text-white/80">Niveau</h4>
+        <h1 className="text-lg font-medium group-hover:text-blue-400">
+          {level.title}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed">{level.description}</p>
       </div>
-    </motion.div>
+      <div className="mt-4">
+        <button className="rounded-full border border-white/20 bg-orange-500 px-8 py-2 text-base font-medium text-nowrap text-gray-950">
+          Accédez à la {level.title}
+        </button>
+      </div>
+    </MotionLink>
   );
 }

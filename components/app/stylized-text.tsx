@@ -44,6 +44,7 @@ const stylizedTextStyle = new StylizedTextPatterns({
 
 export default function StylizedText({ text, textStyle = stylizedTextStyle }: { text: string; textStyle?: StylizedTextPatterns }) {
   const nodes: ReactNode[] = [];
+  text = text.trim();
   const len = text.length;
   let buffer: string[] = [];
   let nodeCount = 0;

@@ -46,6 +46,14 @@ export const appData: Record<ClassLevel, ClassLevelData> = {
     notice: {
       title: "La Première : consolider et approfondir.",
       description: "En Première, les maths deviennent plus techniques, mais restent accessibles avec une bonne méthode : trinôme, probabilités, dérivation, suites, fonction exponentielle, trigonométrie, produit scalaire… tout est lié.",
+      notice: `
+#Objectifs en Première
+--
+Renforcer les automatismes vus en Seconde.
+Comprendre le trinôme, la dérivation et leurs applications.
+Savoir travailler avec des suites, des probabilités et des fonctions.
+Préparer sereinement la spécialité maths en Terminale.
+--`,
     },
   },
 
@@ -58,6 +66,14 @@ export const appData: Record<ClassLevel, ClassLevelData> = {
     notice: {
       title: "La Seconde : poser des bases solides.",
       description: "En Seconde, on revoit les fondamentaux et on découvre les outils qui serviront en Première et Terminale : nombres réels, géométrie, calcul littéral, fonctions, statistiques, probabilités…",
+      notice: `
+#Objectifs en Seconde
+--
+Reprendre confiance en calcul et en raisonnement.
+Maîtriser les bases de la géométrie dans le plan.
+Comprendre les notions clés sur les fonctions.
+Être à l'aise avec les statistiques et probabilités simples.
+--`,
     },
   },
 
@@ -70,6 +86,14 @@ export const appData: Record<ClassLevel, ClassLevelData> = {
       title: "La Terminale : approfondir et réussir le bac en maths.",
       description:
         "En Terminale, tu consolides tes bases et tu te prépares sérieusement à l'épreuve de mathématiques du bac. Chaque chapitre te propose un cours avec ses exercices, des corrigés détaillés et des vidéos de méthode pour t'aider à progresser pas à pas...",
+      notice: `
+#Objectifs en Terminale
+--
+Consolider les notions essentielles du programme et arriver serein à l'épreuve de mathématiques du bac.
+Revoir les bases de Première et combler ses lacunes.
+Maîtriser les notions clés : suites, dérivation, probabilités…
+S'entraîner avec des exercices types, leurs corrigés détaillés et des sujets de bac.
+--`,
     },
   },
 };

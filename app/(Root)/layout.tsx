@@ -1,13 +1,15 @@
 import Footer from "@/components/app/footer";
 import Header from "@/components/app/header";
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="size-full min-h-screen bg-gray-900 relative grid grid-rows-[auto_1fr_auto]">
+    <div className="relative grid size-full min-h-screen grid-rows-[auto_1fr_auto] bg-gray-900">
       <Header />
 
-      <main className="px-4 md:px-8 flex flex-col items-center">
-        <div className="max-w-7xl w-full">{children}</div>
+      <main className="flex flex-col items-center px-4 pt-8 md:px-8">
+        <div className="w-full max-w-7xl">{children}</div>
       </main>
 
       <Footer />
