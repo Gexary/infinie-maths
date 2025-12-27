@@ -20,7 +20,7 @@ export function ChapterFormDialog() {
   const { data: dialogData, close, dialogProps } = chapterForm;
 
   const { control, handleSubmit, setValue, getFieldState, reset } = useForm<z.infer<typeof CreateChapterSchema>>({
-    resolver: zodResolver(CreateChapterSchema),
+    resolver: zodResolver(CreateChapterSchema as any),
     defaultValues: {
       title: "",
       description: "",

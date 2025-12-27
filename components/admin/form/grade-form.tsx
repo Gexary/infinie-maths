@@ -26,7 +26,7 @@ export function GradeFormDialog() {
   const gradeToEdit = getGradeById(dialogData?.toEdit);
 
   const { control, handleSubmit, setValue, getFieldState, reset } = useForm<z.infer<typeof GradeLevelSchema>>({
-    resolver: zodResolver(GradeLevelSchema),
+    resolver: zodResolver(GradeLevelSchema as any),
     defaultValues: {
       name: "",
       slug: "",
