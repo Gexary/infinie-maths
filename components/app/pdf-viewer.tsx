@@ -23,7 +23,7 @@ export default function PDFViewer() {
 
   const chapterId = useChapter().activeChapter.id;
   const chapter = useChapters().items[chapterId];
-  const pdfFile = chapter?.coursePDFUrl;
+  const pdfFile = chapter?.coursePDFUrl ?? "";
 
   const printPDF = usePrint(pdfFile);
 
