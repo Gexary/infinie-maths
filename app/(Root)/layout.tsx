@@ -1,31 +1,39 @@
-import Footer from "@/components/app/footer";
-import Header from "@/components/app/header";
+"use server";
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <div className="relative grid size-full min-h-screen grid-rows-[auto_1fr_auto] bg-gray-900">
-      <Header />
+import { AppProvider } from "@/contexts/app-context";
+import type { DBGrade, Grade, GradeId } from "@/types/global";
+import { gradeLevels } from "@/db/schemas/app";
+import { db } from "@/db";
+import { asc } from "drizzle-orm";
 
-      <main className="flex flex-col items-center px-4 pt-8 md:px-8">
-        <div className="w-full max-w-7xl">{children}</div>
-      </main>
+function buildGradesCollection(rows: Omit<DBGrade, "createdAt" | "updatedAt" | "position">[]) {
+  const items: Record<GradeId, Grade> = {};
+  const order: GradeId[] = [];
 
-      <Footer />
-    </div>
-  );
+  for (const row of rows) {
+    const { id, hero, ...rest } = row;
+    const finalHero = Object.keys(hero ?? {}).length === 0 ? null : (hero as Grade["hero"]);
+    items[id] = { ...rest, hero: finalHero };
+    order.push(id);
+  }
+
+  return { items, order };
 }
 
-const data = {
-  title: "Spécialité mathématiques en !Première!",
-  description:
-    "Tu avances pas à pas : chaque notion de cours est suivie immédiatement d'exercices d'application. Commence par **Cours et exercices**, cherche sérieusement, puis utilise **Corrigés** pour comparer ta méthode et progresser en rédaction. Les **vidéos** seront ajoutées progressivement sur les méthodes importantes.",
-  course: [],
-};
+export default async function PageLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const rows = await db
+    .select({
+      id: gradeLevels.id,
+      slug: gradeLevels.slug,
+      name: gradeLevels.name,
+      title: gradeLevels.title,
+      description: gradeLevels.description,
+      summary: gradeLevels.summary,
+      hero: gradeLevels.hero,
+    })
+    .from(gradeLevels)
+    .orderBy(asc(gradeLevels.position));
+  const json = buildGradesCollection(rows);
 
-interface Course {
-  name: string;
-  description: string;
-  pdf: string;
+  return <AppProvider gradesCollection={json}>{children}</AppProvider>;
 }

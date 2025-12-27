@@ -1,10 +1,12 @@
 "use client";
 
+import { useApp, useGradeLevels } from "@/contexts/app-context";
+import { useGradeLevel } from "@/contexts/grade-level-context";
 import { cn } from "@/lib/utils";
-import { MenuIcon, StarIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 
@@ -13,29 +15,6 @@ interface NavLinkProps {
   name: string;
   icon?: React.ReactNode;
 }
-
-const navLinks: NavLinkProps[] = [
-  {
-    href: "/",
-    name: "Accueil",
-  },
-  {
-    href: "/niveau/seconde",
-    name: "Seconde",
-  },
-  {
-    href: "/niveau/premiere",
-    name: "Première",
-  },
-  {
-    href: "/niveau/terminale",
-    name: "Terminale",
-  },
-  {
-    href: "/premium",
-    name: "Pass Premium",
-  },
-];
 
 export default function Header() {
   const [hidden, setHidden] = useState(false);
@@ -87,24 +66,8 @@ export default function Header() {
           </div>
           <span className="text-gray-300 hidden lg:inline-block">Les maths du lycée, simplement.</span>
         </div>
-
         <div className="flex-row gap-4 items-center hidden md:flex">
-          {navLinks.map((link) => {
-            const active = isActive(link.href);
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
-                  "text-orange-500 border-orange-500": active,
-                  "text-yellow-500 border-yellow-500": link.href === "/premium",
-                })}
-              >
-                {link.href === "/premium" ? <FaStar className="size-4" /> : null}
-                {link.name}
-              </Link>
-            );
-          })}
+          <NavLinks />
         </div>
         <div className="block md:hidden">
           <button className="border-none outline-none cursor-pointer size-8 text-2xl bg-transparent hover:bg-white/5 flex flex-row items-center justify-center rounded-md" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -119,24 +82,39 @@ export default function Header() {
         })}
       >
         <div className="flex-col gap-4 items-center flex p-8">
-          {navLinks.map((link) => {
-            const active = isActive(link.href);
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
-                  "text-orange-500 border-orange-500": active,
-                  "text-yellow-500 border-yellow-500": link.href === "/premium",
-                })}
-              >
-                {link.href === "/premium" ? <FaStar className="size-4" /> : null}
-                {link.name}
-              </Link>
-            );
-          })}
+          <NavLinks />
         </div>
       </div>
     </>
+  );
+}
+
+function NavLinks() {
+  const { gradeSlug } = useParams<{ gradeSlug: string | undefined }>();
+  const { iterateOver } = useGradeLevels();
+
+  return (
+    <>
+      <NavLink name="Accueil" href="/" active={false} />
+      {iterateOver((grade, i) => (
+        <NavLink name={grade.name} href={`/niveau/${grade.slug}`} active={grade.slug === gradeSlug} key={i} />
+      ))}
+      <NavLink name="Premium" href="/premium" active={false} variant="premium" />
+    </>
+  );
+}
+
+function NavLink({ href, name, active, variant }: NavLinkProps & { active: boolean; variant?: "premium" }) {
+  return (
+    <Link
+      className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {
+        "text-orange-500 border-orange-500": active,
+        "text-yellow-500 border-yellow-500": variant === "premium",
+      })}
+      href={href}
+    >
+      {variant === "premium" && <FaStar className="size-4" />}
+      {name}
+    </Link>
   );
 }

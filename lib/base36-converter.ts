@@ -1,3 +1,5 @@
+import { uuidv7 } from "uuidv7";
+
 const CHARS = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 function base36ToBigInt(base36: string): bigint {
@@ -25,3 +27,10 @@ export const base36ToUuid = (base36: string) => {
   const hex = base36ToBigInt(base36).toString(16).padStart(32, "0");
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 };
+
+/**
+ * Generate a UID36 string
+ */
+export function generateUID36() {
+  return uuidToBase36(uuidv7());
+}

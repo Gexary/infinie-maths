@@ -1,6 +1,8 @@
 "use client";
 
-import { Fragment, type ReactNode } from "react";
+import { Fragment } from "react";
+import { jsx, jsxs } from "react/jsx-runtime";
+import type { ReactNode } from "react";
 
 export type StyleRenderer = (props: { children: string; params?: string }) => ReactNode;
 
@@ -13,6 +15,7 @@ export class StylizedTextPatterns {
   constructor(styleMap: StyleMap) {
     this.styles = styleMap;
     this.patternMap = new Map();
+
     for (const key of Object.keys(styleMap)) {
       const [start, end] = key.split(" ");
       this.patternMap.set(start, { end, key });
@@ -21,28 +24,19 @@ export class StylizedTextPatterns {
 }
 
 const stylizedTextStyle = new StylizedTextPatterns({
-  "** **": ({ children, params }) => (
-    <span className="font-bold">
-      {children}
-      {params ? ` (${params})` : ""}
-    </span>
-  ),
-  // "{ }": ({ children, params }) => (
-  //   <span className="text-red-500">
-  //     {children}
-  //     {params ? ` (${params})` : ""}
-  //   </span>
-  // ),
-  // "% %": ({ children, params }) => (
-  //   <span className="text-green-500">
-  //     {children}
-  //     {params ? ` (${params})` : ""}
-  //   </span>
-  // ),
-  // "$ $": ({ children, params }) => <span className={`text-[${params}]`}>{children}</span>,
+  "** **": ({ children, params }) =>
+    jsxs("span", {
+      className: "font-bold",
+      children: [children, params ? ` (${params})` : ""],
+    }),
+  "! !": ({ children, params }) =>
+    jsxs("span", {
+      className: "text-blue-500",
+      children: [children, params ? ` (${params})` : ""],
+    }),
 });
 
-export default function StylizedText({ text, textStyle = stylizedTextStyle }: { text: string; textStyle?: StylizedTextPatterns }) {
+export default function StylizedText({ text, textStyle = stylizedTextStyle, className }: { text: string; textStyle?: StylizedTextPatterns; className?: string }) {
   const nodes: ReactNode[] = [];
   text = text.trim();
   const len = text.length;
@@ -95,8 +89,23 @@ export default function StylizedText({ text, textStyle = stylizedTextStyle }: { 
         }
 
         if (text.startsWith(end, j)) {
-          if (buffer.length) nodes.push(buffer.join(""));
-          nodes.push(<Fragment key={nodeCount++}>{textStyle.styles[key]({ children: contentArr.join(""), params })}</Fragment>);
+          if (buffer.length) {
+            nodes.push(buffer.join(""));
+          }
+
+          nodes.push(
+            jsx(
+              Fragment,
+              {
+                children: textStyle.styles[key]({
+                  children: contentArr.join(""),
+                  params,
+                }),
+              },
+              nodeCount++
+            )
+          );
+
           buffer = [];
           i = j + end.length;
           matched = true;
@@ -111,7 +120,18 @@ export default function StylizedText({ text, textStyle = stylizedTextStyle }: { 
     }
   }
 
-  if (buffer.length) nodes.push(buffer.join(""));
+  if (buffer.length) {
+    nodes.push(buffer.join(""));
+  }
 
-  return <>{nodes}</>;
+  if (className) {
+    return jsx("p", {
+      className,
+      children: nodes,
+    });
+  }
+
+  return jsx(Fragment, {
+    children: nodes,
+  });
 }
