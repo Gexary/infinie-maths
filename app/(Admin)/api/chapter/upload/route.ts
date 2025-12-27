@@ -1,10 +1,11 @@
-import fs from "fs/promises";
+// import fs from "fs/promises";
 import path from "path";
 import { fileTypeFromBuffer } from "file-type";
 import { eq } from "drizzle-orm";
 import { chapters } from "@/db/schemas/app";
 import { db } from "@/db";
 import { NextResponse } from "next/server";
+import { del, put } from "@vercel/blob";
 
 const DIR_PATH = path.resolve(`./public/files`);
 
@@ -47,17 +48,18 @@ export async function POST(req: Request) {
     const fileName = `${chapterId}.${ext}`;
     const filePath = path.resolve(DIR_PATH, folderNames[type], fileName);
 
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, buffer);
+    // await fs.mkdir(path.dirname(filePath), { recursive: true });
+    // await fs.writeFile(filePath, buffer);
+    const { url } = await put(`chapters/${chapterId}.${ext}`, buffer, { access: "public", allowOverwrite: true });
 
     await db
       .update(chapters)
       .set({
-        [jsonKeyNames[type]]: fileName,
+        [jsonKeyNames[type]]: url,
       })
       .where(eq(chapters.id, chapterId));
 
-    return new Response(JSON.stringify({ success: true, fileName: fileName }), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true, fileName: url }), { status: 200, headers: { "Content-Type": "application/json" } });
   } catch (error) {
     console.error("Erreur lors du traitement du fichier:", error);
     return new Response(JSON.stringify({ error: "Erreur lors du traitement du fichier" }), { status: 500, headers: { "Content-Type": "application/json" } });
@@ -65,9 +67,11 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const { id, type }: { id: string; type: FileType } = await req.json();
+  const { id, type, url }: { id: string; type: FileType; url: string } = await req.json();
 
   try {
+    await del(url);
+
     const rows = await db
       .update(chapters)
       .set({ [jsonKeyNames[type]]: null })

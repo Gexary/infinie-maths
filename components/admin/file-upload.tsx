@@ -95,7 +95,7 @@ export function FileUpload({ value }: { value: FileType }) {
     try {
       const response = await fetch(`/api/chapter/upload`, {
         method: "DELETE",
-        body: JSON.stringify({ id: dialogData?.toEdit!, type: value }),
+        body: JSON.stringify({ id: dialogData?.toEdit!, type: value, url: actualUrl }),
       });
       if (!response.ok) throw new Error("Erreur lors de la suppression du fichier");
       editChapterKey(dialogData?.toEdit!, valueToKey[value], null);
