@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, X, Loader2, ExternalLink, FileTextIcon } from "lucide-react";
+import { Upload, ExternalLink, FileTextIcon, Loader2Icon, XIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminGrade } from "@/contexts/admin/admin-grade-context";
 import type { Chapter } from "@/types/global";
@@ -24,6 +24,7 @@ const valueToKey: Record<FileType, keyof Chapter> = {
 
 export function FileUpload({ value }: { value: FileType }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -92,6 +93,7 @@ export function FileUpload({ value }: { value: FileType }) {
   };
 
   const handleRemove = async () => {
+    setIsDeleting(true);
     try {
       const response = await fetch(`/api/chapter/upload`, {
         method: "DELETE",
@@ -105,6 +107,8 @@ export function FileUpload({ value }: { value: FileType }) {
     } catch (error) {
       toast.error("Erreur lors de la suppression du fichier");
       console.error("Erreur lors de la suppression du fichier:", error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -117,13 +121,13 @@ export function FileUpload({ value }: { value: FileType }) {
           <FileTextIcon className="h-5 w-5 text-primary shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">{fileMetadata[value].label}</p>
-            <a href={`/files/${value}/${actualUrl}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+            <a href={actualUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
               Voir le fichier
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
-          <Button type="button" variant="ghost" size="icon" onClick={handleRemove} className="shrink-0">
-            <X className="h-4 w-4" />
+          <Button type="button" variant="ghost" size="icon" onClick={handleRemove} className="shrink-0 hover:bg-white/5! transition-colors duration-200 ease-in-out cursor-pointer" disabled={isDeleting}>
+            {isDeleting ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <XIcon className="size-4" />}
           </Button>
         </div>
       ) : (
@@ -131,7 +135,7 @@ export function FileUpload({ value }: { value: FileType }) {
           <Button type="button" variant="outline" onClick={() => inputRef.current?.click()} disabled={isUploading} className="flex-1 gap-2">
             {isUploading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2Icon className="h-4 w-4 animate-spin" />
                 Upload en cours...
               </>
             ) : (
