@@ -16,7 +16,8 @@ export default function Page() {
       {activeGrade.hero ? <NoticeCard {...activeGrade.hero} /> : null}
 
       {/* Grade Information */}
-      <h1 className="text-center text-3xl font-bold text-white">
+      <h1 className="text-center text-3xl font-bold text-white relative">
+        <div className="absolute top-1/2 left-1/2 w-2xl h-16 bg-blue-500 blur-3xl rounded-[100%] opacity-40 -translate-x-1/2 -translate-y-1/2" />
         <StylizedText text={activeGrade.title} />
       </h1>
       <StylizedText text={activeGrade.description} className="mt-4 text-sm leading-relaxed" />

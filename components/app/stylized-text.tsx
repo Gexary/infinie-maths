@@ -98,7 +98,7 @@ export default function StylizedText({ text, textStyle = stylizedTextStyle, clas
               Fragment,
               {
                 children: textStyle.styles[key]({
-                  children: contentArr.join(""),
+                  children: contentArr.join("").trim(),
                   params,
                 }),
               },

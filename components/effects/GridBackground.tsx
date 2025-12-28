@@ -13,7 +13,7 @@ interface GridBackgroundProps {
   className?: string;
 }
 
-export default function GridBackground({ width = 600, height = 400, cellSize = 20, borderWidth = 1, borderColor = "#fff", className }: GridBackgroundProps) {
+export default function GridBackground({ width = 400, height = 400, cellSize = 20, borderWidth = 1, borderColor = "#fff", className }: GridBackgroundProps) {
   const [lines, setLines] = useState<React.ReactNode[]>([]);
 
   useEffect(() => {

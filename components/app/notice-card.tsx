@@ -43,7 +43,7 @@ export default function NoticeCard({ title, description, notice }: NoticeProps) 
         </div>
       </div>
       {notice && (
-        <div className="w-full rounded-xl bg-gray-950 p-4 text-white md:p-6 lg:max-w-md">
+        <div className="w-full rounded-xl bg-gray-950 p-4 text-white md:p-6 lg:max-w-md bottom-glow">
           <StylizedText text={notice} textStyle={stylizedTextStyle} />
         </div>
       )}

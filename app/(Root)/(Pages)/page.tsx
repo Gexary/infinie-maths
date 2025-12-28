@@ -23,7 +23,10 @@ export default function Page() {
       <NoticeCard title="Ton espace de maths dédié au lycée." description="Des cours simples, des exercices corrigés et des entraînements ciblés pour réussir en Seconde, Première et Terminale, à ton rythme." notice={HOME_PAGE_NOTICE} />
 
       {/* Grade Levels Selection Section */}
-      <h1 className="text-center text-3xl font-bold text-white">Choisis ton niveau</h1>
+      <h1 className="text-center text-3xl font-bold text-white relative">
+        <div className="absolute top-1/2 left-1/2 w-xl h-16 bg-blue-500 blur-3xl rounded-[100%] opacity-40 -translate-x-1/2 -translate-y-1/2" />
+        Choisis ton niveau
+      </h1>
       <StylizedText text="Chaque parcours te guide pas à pas, du cours aux exercices corrigés." className="mt-4 text-center text-sm leading-relaxed" />
       <div className="mt-8 grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         {gradeLevels.iterateOver((grade, i) => (
