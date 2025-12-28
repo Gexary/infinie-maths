@@ -51,7 +51,7 @@ export function AdminProvider({ children, data }: AdminProviderProps) {
   const addGrade = useCallback(
     async (grade: Grade) => {
       try {
-        const result = await fetch("/api/grade", {
+        const result = await fetch("/api/admin/grade", {
           method: "POST",
           body: JSON.stringify(grade),
         });
@@ -77,7 +77,7 @@ export function AdminProvider({ children, data }: AdminProviderProps) {
   const updateGrade = useCallback(
     async (gradeId: GradeId, data: Partial<Grade>) => {
       try {
-        const result = await fetch(`/api/grade`, {
+        const result = await fetch(`/api/admin/grade`, {
           method: "PATCH",
           body: JSON.stringify({
             id: gradeId,
@@ -93,6 +93,7 @@ export function AdminProvider({ children, data }: AdminProviderProps) {
             [id]: { ...prev.items[id], ...rest },
           },
         }));
+        toast.success("Niveau modifié avec succès");
         return true;
       } catch (error) {
         toast("Erreur lors de la modification du niveau", {
@@ -108,7 +109,7 @@ export function AdminProvider({ children, data }: AdminProviderProps) {
   const deleteGrade = useCallback(
     async (gradeId: GradeId) => {
       try {
-        const result = await fetch(`/api/grade`, {
+        const result = await fetch(`/api/admin/grade`, {
           method: "DELETE",
           body: JSON.stringify({ id: gradeId }),
         });
@@ -145,7 +146,7 @@ export function AdminProvider({ children, data }: AdminProviderProps) {
         return { ...prev, order: callback(prev.order) };
       });
       try {
-        const result = await fetch(`/api/grade/order`, {
+        const result = await fetch(`/api/admin/grade/order`, {
           method: "PATCH",
           body: JSON.stringify({ order: newOrder }),
         });

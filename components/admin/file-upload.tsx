@@ -43,7 +43,7 @@ export function FileUpload({ value }: { value: FileType }) {
       formData.set("type", value);
       formData.set("file", file);
 
-      const response = await fetch("/api/chapter/upload", {
+      const response = await fetch("/api/admin/chapter/upload", {
         method: "POST",
         body: formData,
       });
@@ -95,7 +95,7 @@ export function FileUpload({ value }: { value: FileType }) {
   const handleRemove = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/chapter/upload`, {
+      const response = await fetch(`/api/admin/chapter/upload`, {
         method: "DELETE",
         body: JSON.stringify({ id: dialogData?.toEdit!, type: value, url: actualUrl }),
       });

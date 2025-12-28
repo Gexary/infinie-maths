@@ -69,7 +69,7 @@ export function AdminGradeProvider({ children, data: { activeGradeData, chapters
   const addChapter = useCallback(
     async (chapter: z.infer<typeof CreateChapterSchema>) => {
       try {
-        const result = await fetch("/api/chapter", {
+        const result = await fetch("/api/admin/chapter", {
           method: "POST",
           body: JSON.stringify({
             gradeId: activeGrade.id,
@@ -102,7 +102,7 @@ export function AdminGradeProvider({ children, data: { activeGradeData, chapters
   const deleteChapter = useCallback(
     async (chapterId: ChapterId) => {
       try {
-        const result = await fetch(`/api/chapter`, {
+        const result = await fetch(`/api/admin/chapter`, {
           method: "DELETE",
           body: JSON.stringify({ id: chapterId }),
         });
@@ -130,7 +130,7 @@ export function AdminGradeProvider({ children, data: { activeGradeData, chapters
   const updateChapter = useCallback(
     async (chapterId: ChapterId, data: Partial<z.infer<typeof CreateChapterSchema>>) => {
       try {
-        const result = await fetch(`/api/chapter`, {
+        const result = await fetch(`/api/admin/chapter`, {
           method: "PATCH",
           body: JSON.stringify({
             id: chapterId,
@@ -196,7 +196,7 @@ export function AdminGradeProvider({ children, data: { activeGradeData, chapters
         return { ...prev, order: newOrder };
       });
       try {
-        const result = await fetch(`/api/chapter/order`, {
+        const result = await fetch(`/api/admin/chapter/order`, {
           method: "PATCH",
           body: JSON.stringify({ order: newOrder }),
         });
