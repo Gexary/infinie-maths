@@ -13,6 +13,7 @@ import { FileUpload } from "@/components/admin/file-upload";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { useAdminGrade } from "@/contexts/admin/admin-grade-context";
+import { Loader2Icon } from "lucide-react";
 
 export function ChapterFormDialog() {
   const { chapterCount, chapterForm, addChapter, updateChapter, getChapterById } = useAdminGrade();
@@ -41,11 +42,15 @@ export function ChapterFormDialog() {
     });
   }, [chapterToEdit, reset]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function onSubmit(data: z.infer<typeof CreateChapterSchema>) {
+    setIsLoading(true);
     let result;
     if (!dialogData) result = await addChapter(data);
     else result = await updateChapter(dialogData.toEdit, data);
     setValue("annotation", `Chapitre ${chapterCount + 2}`);
+    setIsLoading(false);
     if (result) close();
   }
 
@@ -55,7 +60,7 @@ export function ChapterFormDialog() {
     <Dialog {...dialogProps}>
       <DialogContent className={`w-full bg-card ${dialogData ? "max-w-7xl!" : "max-w-xl!"}`}>
         <DialogHeader>
-          <DialogTitle>{dialogData ? "Modifier le chapitre" : "Nouveau chapitre"}</DialogTitle>
+          <DialogTitle className="text-lg">{dialogData ? "Modifier le chapitre" : "Nouveau chapitre"}</DialogTitle>
           <DialogDescription>{dialogData ? "Modifiez les informations de ce chapitre." : "Ajoutez un nouveau chapitre à cette classe."}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -63,7 +68,7 @@ export function ChapterFormDialog() {
             <div className="space-y-4">
               <InputWithSlug inputName="title" slugName="slug" control={control} displayName="Nom" getFieldState={getFieldState} setValue={setValue} />
               <FormController name="annotation" control={control} displayName="Annotation" type="input" />
-              <FormController name="description" control={control} displayName="Description" type="textarea" placeholder="Description de la classe..." rows={2} />
+              <FormController name="description" control={control} displayName="Description" type="textarea" placeholder="Description de la classe..." />
             </div>
             {dialogData && (
               <div className="space-y-4">
@@ -91,7 +96,17 @@ export function ChapterFormDialog() {
             <Button type="button" variant="outline" onClick={close}>
               Annuler
             </Button>
-            <Button type="submit">{dialogData ? "Sauvegarder" : "Ajouter"}</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2Icon className="h-4 w-4 animate-spin" /> Enregistrement...
+                </>
+              ) : dialogData ? (
+                "Sauvegarder"
+              ) : (
+                "Ajouter"
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
