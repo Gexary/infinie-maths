@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { mono, sans } from "@/lib/fonts";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Toaster />
         </ThemeProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
