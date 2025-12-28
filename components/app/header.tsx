@@ -95,16 +95,19 @@ function NavLinks() {
 
   return (
     <>
-      <NavLink name="Accueil" href="/" active={false} />
+      <NavLink name="Accueil" href="/" />
       {iterateOver((grade, i) => (
         <NavLink name={grade.name} href={`/niveau/${grade.slug}`} active={grade.slug === gradeSlug} key={i} />
       ))}
-      <NavLink name="Premium" href="/premium" active={false} variant="premium" />
+      <NavLink name="Premium" href="/premium" variant="premium" />
     </>
   );
 }
 
-function NavLink({ href, name, active, variant }: NavLinkProps & { active: boolean; variant?: "premium" }) {
+function NavLink({ href, name, active, variant }: NavLinkProps & { active?: boolean; variant?: "premium" }) {
+  const pathname = usePathname();
+  if (active === undefined) active = pathname === href;
+
   return (
     <Link
       className={cn("flex flex-row items-center gap-2 px-4 py-1 rounded-full border text-base text-white border-transparent transition", {

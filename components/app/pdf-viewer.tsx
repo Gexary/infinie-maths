@@ -89,7 +89,7 @@ export default function PDFViewer() {
             >
               Mode Liste <FilesIcon className="size-4" />
             </button>
-            <Link
+            <a
               href={pdfFile}
               target="_blank"
               rel="noopener noreferrer"
@@ -97,7 +97,7 @@ export default function PDFViewer() {
               className="flex size-9 cursor-pointer flex-row items-center justify-center rounded-md border border-gray-700 bg-gray-800 text-sm font-medium transition-colors"
             >
               <DownloadIcon className="size-4" />
-            </Link>
+            </a>
             <button className="flex size-9 cursor-pointer flex-row items-center justify-center rounded-md border border-gray-700 bg-gray-800 text-sm font-medium transition-colors" onClick={printPDF}>
               <PrinterIcon className="size-4" />
             </button>

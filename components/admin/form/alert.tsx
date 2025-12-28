@@ -2,6 +2,8 @@ import StylizedText from "@/components/app/stylized-text";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useAdmin } from "@/contexts/admin/admin-context";
 import { useAdminGrade } from "@/contexts/admin/admin-grade-context";
+import { Loader2Icon } from "lucide-react";
+import { useState } from "react";
 
 interface AlertProps {
   dialogProps: any;
@@ -11,8 +13,12 @@ interface AlertProps {
 }
 
 function Alert({ dialogProps, title, description, handleDelete }: Readonly<AlertProps>) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const deleteFunc = async () => {
+    setIsLoading(true);
     const result = await handleDelete();
+    setIsLoading(false);
     if (result) dialogProps.onOpenChange(false);
   };
 
@@ -26,9 +32,15 @@ function Alert({ dialogProps, title, description, handleDelete }: Readonly<Alert
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel className="cursor-pointer">Annuler</AlertDialogCancel>
           <AlertDialogAction onClick={deleteFunc} className="bg-red-700 cursor-pointer border-none border-t! border-red-200/20 text-foreground hover:bg-destructive/90">
-            Supprimer
+            {isLoading ? (
+              <>
+                <Loader2Icon className="h-4 w-4 animate-spin" /> Supprimer...
+              </>
+            ) : (
+              "Supprimer"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

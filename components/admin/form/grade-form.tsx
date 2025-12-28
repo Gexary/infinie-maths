@@ -2,18 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm, type Control } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { GradeLevelSchema } from "@/lib/validation";
 import * as z from "zod";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { FormController, InputWithSlug } from "@/components/admin/form/form-utils";
 import { useAdmin } from "@/contexts/admin/admin-context";
-import { convertToSlug } from "@/lib/slug";
+import { Loader2Icon } from "lucide-react";
 
 export function GradeFormDialog() {
   const {
@@ -24,6 +20,7 @@ export function GradeFormDialog() {
   } = useAdmin();
 
   const gradeToEdit = getGradeById(dialogData?.toEdit);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { control, handleSubmit, setValue, getFieldState, reset } = useForm<z.infer<typeof GradeLevelSchema>>({
     resolver: zodResolver(GradeLevelSchema as any),
@@ -58,9 +55,11 @@ export function GradeFormDialog() {
   }, [gradeToEdit, reset]);
 
   async function onSubmit(data: z.infer<typeof GradeLevelSchema>) {
+    setIsLoading(true);
     let result;
     if (!dialogData) result = await addGrade(data);
     else result = await updateGrade(dialogData.toEdit, data);
+    setIsLoading(false);
     if (result) close();
   }
 
@@ -89,7 +88,17 @@ export function GradeFormDialog() {
             <Button type="button" variant="outline" onClick={close}>
               Annuler
             </Button>
-            <Button type="submit">{dialogData ? "Sauvegarder" : "Créer"}</Button>
+            <Button type="submit">
+              {isLoading ? (
+                <>
+                  <Loader2Icon className="size-4 animate-spin" /> Enregistrement...
+                </>
+              ) : dialogData ? (
+                "Sauvegarder"
+              ) : (
+                "Créer"
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
