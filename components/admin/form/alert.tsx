@@ -27,7 +27,7 @@ function Alert({ dialogProps, title, description, handleDelete }: Readonly<Alert
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={deleteFunc} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogAction onClick={deleteFunc} className="bg-red-700 cursor-pointer border-none border-t! border-red-200/20 text-foreground hover:bg-destructive/90">
             Supprimer
           </AlertDialogAction>
         </AlertDialogFooter>
