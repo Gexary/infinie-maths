@@ -2,8 +2,9 @@ import StylizedText from "@/components/app/stylized-text";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useAdmin } from "@/contexts/admin/admin-context";
 import { useAdminGrade } from "@/contexts/admin/admin-grade-context";
+import { useValueMemo } from "@/hooks/use-value-memo";
 import { Loader2Icon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AlertProps {
   dialogProps: any;
@@ -55,13 +56,13 @@ export function GradeAlert() {
     deleteGrade,
   } = useAdmin();
 
-  const gradeName = getGradeById(data?.toDelete)?.name;
+  const gradeName = getGradeById(data?.toDelete)?.name ?? "Introuvable";
 
   return (
     <Alert
       dialogProps={dialogProps}
       title="Supprimer cette classe ?"
-      description={`Cette action est irréversible. Vous êtes sur le point de supprimer la classe **"${gradeName ?? "Introuvable"}"**. Tous les chapitres associés seront également supprimés.`}
+      description={`Cette action est irréversible. Vous êtes sur le point de supprimer la classe **"${gradeName}"**. Tous les chapitres associés seront également supprimés.`}
       handleDelete={() => deleteGrade(data?.toDelete!)}
     />
   );
@@ -74,14 +75,7 @@ export function ChapterAlert() {
     deleteChapter,
   } = useAdminGrade();
 
-  const chapterName = getChapterById(data?.toDelete)?.title;
+  const chapterName = getChapterById(data?.toDelete)?.title ?? "Introuvable";
 
-  return (
-    <Alert
-      dialogProps={dialogProps}
-      title="Supprimer ce chapitre ?"
-      description={`Cette action est irréversible. Vous êtes sur le point de supprimer le chapitre **"${chapterName ?? "Introuvable"}"**.`}
-      handleDelete={() => deleteChapter(data?.toDelete!)}
-    />
-  );
+  return <Alert dialogProps={dialogProps} title="Supprimer ce chapitre ?" description={`Cette action est irréversible. Vous êtes sur le point de supprimer le chapitre **"${chapterName}"**.`} handleDelete={() => deleteChapter(data?.toDelete!)} />;
 }

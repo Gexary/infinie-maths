@@ -5,6 +5,7 @@ import { PremiumPlan } from "@/components/app/premium";
 import StylizedText from "@/components/app/stylized-text";
 import NoticeCard from "@/components/app/notice-card";
 import { getActiveGrade, useChapters } from "@/contexts/grade-level-context";
+import Link from "next/link";
 
 export default function Page() {
   const activeGrade = getActiveGrade();

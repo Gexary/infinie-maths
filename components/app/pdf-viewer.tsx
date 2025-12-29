@@ -1,13 +1,13 @@
 "use client";
 
-import { TableOfContents } from "@/app/(Root)/(Pages)/niveau/[gradeSlug]/[chapterSlug]/cours/page";
+import { TableOfContents } from "@/components/app/table-of-contents";
 import { useChapter } from "@/contexts/chapter-context";
 import { useChapters } from "@/contexts/grade-level-context";
 import usePrint from "@/hooks/use-print";
 import { cn } from "@/lib/utils";
+import type { Chapter } from "@/types/global";
 import { FilesIcon, ArrowLeftIcon, ArrowRightIcon, DownloadIcon, PrinterIcon, XIcon, ZoomInIcon, ZoomOut } from "lucide-react";
-import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -15,7 +15,14 @@ import "react-pdf/dist/Page/TextLayer.css";
 // Configuration du worker PDF.js
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export default function PDFViewer() {
+type PDFViewerType = "course" | "correction";
+
+const keys: Record<PDFViewerType, keyof Chapter> = {
+  course: "coursePDFUrl",
+  correction: "correctionsPDFUrl",
+};
+
+export default function PDFViewer({ type }: { type: PDFViewerType }) {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -23,7 +30,7 @@ export default function PDFViewer() {
 
   const chapterId = useChapter().activeChapter.id;
   const chapter = useChapters().items[chapterId];
-  const pdfFile = chapter?.coursePDFUrl ?? "";
+  const pdfFile = chapter?.[keys[type]] ?? "";
 
   const printPDF = usePrint(pdfFile);
 
@@ -77,94 +84,92 @@ export default function PDFViewer() {
   const [fullscreen, setFullscreen] = useState(false);
 
   return (
-    <>
-      <FullscreenPDFViewer fullscreen={fullscreen} setFullscreen={setFullscreen} pdfWidth={pdfWidth} numPages={numPages} pdfFile={pdfFile} onDocumentLoadSuccess={onDocumentLoadSuccess} />
-      <div className={cn("w-full", { "opacity-20": fullscreen })}>
-        <div className="mb-4 flex flex-row items-center justify-between gap-2">
-          <TableOfContents />
-          <div className="flex flex-row items-center gap-2 shrink-0">
-            <button
-              onClick={() => setViewMode((prevMode) => (prevMode === "list" ? "page" : "list"))}
-              className={`flex h-9 cursor-pointer flex-row items-center gap-2 rounded-md border bg-gray-800 px-4 text-sm font-medium transition-colors ${viewMode === "list" ? "border-blue-500" : "border-gray-700"}`}
-            >
-              Mode Liste <FilesIcon className="size-4" />
-            </button>
-            <a
-              href={pdfFile}
-              target="_blank"
-              rel="noopener noreferrer"
-              download="chapitre-1.pdf"
-              className="flex size-9 cursor-pointer flex-row items-center justify-center rounded-md border border-gray-700 bg-gray-800 text-sm font-medium transition-colors"
-            >
-              <DownloadIcon className="size-4" />
-            </a>
-            <button className="flex size-9 cursor-pointer flex-row items-center justify-center rounded-md border border-gray-700 bg-gray-800 text-sm font-medium transition-colors" onClick={printPDF}>
-              <PrinterIcon className="size-4" />
-            </button>
-          </div>
-        </div>
-        <div className="overflow-hidden" ref={pdfRef}>
-          <div className={`w-full overflow-auto ${isZoomed ? "fixed top-0 left-0" : "relative"} transition-all duration-200 ease-in-out`}>
-            <Document
-              file={pdfFile}
-              onLoadSuccess={onDocumentLoadSuccess}
-              loading={
-                <div className="flex h-full items-center justify-center">
-                  <div className="text-center">
-                    <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-4 border-blue-600"></div>
-                    <p className="font-medium text-gray-600">Chargement du PDF...</p>
-                  </div>
-                </div>
-              }
-              error={
-                <div className="flex h-full items-center justify-center">
-                  <div className="flex flex-col items-center justify-center text-center text-red-600">
-                    <p className="mb-2 flex items-center gap-2 text-xl font-bold">
-                      <XIcon className="size-8" /> Erreur
-                    </p>
-                    <p className="text-center">Impossible de charger le PDF</p>
-                  </div>
-                </div>
-              }
-              className="flex w-full cursor-pointer flex-col items-center gap-4 select-none"
-            >
-              {viewMode === "list" ? (
-                numPages &&
-                Array.from(new Array(numPages), (el, index) => (
-                  <div key={`page_${index + 1}`} className="mb-4 w-full overflow-hidden shadow-md">
-                    <Page pageNumber={index + 1} width={width} renderTextLayer={false} renderAnnotationLayer={true} />
-                    <div className="bg-gray-100 px-4 py-2 text-center text-sm font-medium text-gray-600">Page {index + 1}</div>
-                  </div>
-                ))
-              ) : (
-                <Page className="shadow-md" pageNumber={pageNumber} width={width} renderTextLayer={true} renderAnnotationLayer={true} onClick={() => setFullscreen(true)} />
-              )}
-            </Document>
-          </div>
-        </div>
-        <div className="mt-8 flex w-full flex-row justify-center">
-          {numPages ? (
-            viewMode === "page" ? (
-              <div className="flex w-lg items-center justify-between">
-                <button onClick={previousPage} disabled={pageNumber <= 1} className="flex cursor-pointer flex-row items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-4 py-2 text-sm font-medium transition-colors">
-                  <ArrowLeftIcon className="size-4" /> Précédent
-                </button>
-                <span className="font-medium text-gray-300">
-                  Page {pageNumber} sur {numPages}
-                </span>
-                <button onClick={nextPage} disabled={pageNumber >= numPages} className="flex cursor-pointer flex-row items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-4 py-2 text-sm font-medium transition-colors">
-                  Suivant <ArrowRightIcon className="size-4" />
-                </button>
-              </div>
-            ) : (
-              <span>
-                Total : {numPages} page{numPages > 1 ? "s" : ""}
-              </span>
-            )
-          ) : null}
+    <div className={cn("w-full", { "opacity-20": fullscreen })}>
+      <div className="mb-4 flex flex-row items-center justify-between gap-2">
+        <TableOfContents />
+        <div className="flex flex-row items-center gap-2 shrink-0">
+          <button
+            onClick={() => setViewMode((prevMode) => (prevMode === "list" ? "page" : "list"))}
+            className={`flex h-9 cursor-pointer flex-row items-center gap-2 rounded-md border bg-gray-800 px-4 text-sm font-medium transition-colors ${viewMode === "list" ? "border-blue-500" : "border-gray-700"}`}
+          >
+            Mode Liste <FilesIcon className="size-4" />
+          </button>
+          <a
+            href={pdfFile}
+            target="_blank"
+            rel="noopener noreferrer"
+            download="chapitre-1.pdf"
+            className="flex size-9 cursor-pointer flex-row items-center justify-center rounded-md border border-gray-700 bg-gray-800 text-sm font-medium transition-colors"
+          >
+            <DownloadIcon className="size-4" />
+          </a>
+          <button className="flex size-9 cursor-pointer flex-row items-center justify-center rounded-md border border-gray-700 bg-gray-800 text-sm font-medium transition-colors" onClick={printPDF}>
+            <PrinterIcon className="size-4" />
+          </button>
         </div>
       </div>
-    </>
+      <div className="overflow-hidden" ref={pdfRef}>
+        <FullscreenPDFViewer fullscreen={fullscreen} setFullscreen={setFullscreen} pdfWidth={pdfWidth} numPages={numPages} pdfFile={pdfFile} onDocumentLoadSuccess={onDocumentLoadSuccess} />
+        <div className={`w-full overflow-auto ${isZoomed ? "fixed top-0 left-0" : "relative"} transition-all duration-200 ease-in-out`}>
+          <Document
+            file={pdfFile}
+            onLoadSuccess={onDocumentLoadSuccess}
+            loading={
+              <div className="flex h-full items-center justify-center">
+                <div className="text-center">
+                  <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-4 border-blue-600"></div>
+                  <p className="font-medium text-gray-600">Chargement du PDF...</p>
+                </div>
+              </div>
+            }
+            error={
+              <div className="flex h-full items-center justify-center">
+                <div className="flex flex-col items-center justify-center text-center text-red-600">
+                  <p className="mb-2 flex items-center gap-2 text-xl font-bold">
+                    <XIcon className="size-8" /> Erreur
+                  </p>
+                  <p className="text-center">Impossible de charger le PDF</p>
+                </div>
+              </div>
+            }
+            className="flex w-full cursor-pointer flex-col items-center gap-4 select-none"
+          >
+            {viewMode === "list" ? (
+              numPages &&
+              Array.from(new Array(numPages), (el, index) => (
+                <div key={`page_${index + 1}`} className="mb-4 w-full overflow-hidden shadow-md">
+                  <Page pageNumber={index + 1} width={width} renderTextLayer={false} renderAnnotationLayer={true} />
+                  <div className="bg-gray-100 px-4 py-2 text-center text-sm font-medium text-gray-600">Page {index + 1}</div>
+                </div>
+              ))
+            ) : (
+              <Page className="shadow-md" pageNumber={pageNumber} width={width} renderTextLayer={true} renderAnnotationLayer={true} onClick={() => setFullscreen(true)} />
+            )}
+          </Document>
+        </div>
+      </div>
+      <div className="mt-8 flex w-full flex-row justify-center">
+        {numPages ? (
+          viewMode === "page" ? (
+            <div className="flex w-lg items-center justify-between">
+              <button onClick={previousPage} disabled={pageNumber <= 1} className="flex cursor-pointer flex-row items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-4 py-2 text-sm font-medium transition-colors">
+                <ArrowLeftIcon className="size-4" /> Précédent
+              </button>
+              <span className="font-medium text-gray-300">
+                Page {pageNumber} sur {numPages}
+              </span>
+              <button onClick={nextPage} disabled={pageNumber >= numPages} className="flex cursor-pointer flex-row items-center gap-2 rounded-md border border-gray-700 bg-gray-800 px-4 py-2 text-sm font-medium transition-colors">
+                Suivant <ArrowRightIcon className="size-4" />
+              </button>
+            </div>
+          ) : (
+            <span>
+              Total : {numPages} page{numPages > 1 ? "s" : ""}
+            </span>
+          )
+        ) : null}
+      </div>
+    </div>
   );
 }
 

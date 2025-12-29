@@ -1,6 +1,7 @@
 "use client";
 
-import type { ChapterId, ChapterSlug } from "@/types/global";
+import { useChapters } from "@/contexts/grade-level-context";
+import type { Chapter, ChapterId, ChapterSlug } from "@/types/global";
 import { createContext, useContext, useRef, type ReactNode } from "react";
 
 export interface ChapterContextProps {
@@ -25,4 +26,10 @@ export function ChapterProvider({ children, chapterId, chapterSlug }: Readonly<{
   }>({ id: chapterId, slug: chapterSlug });
 
   return <ChapterContext value={{ activeChapter: activeChapterRef.current }}>{children}</ChapterContext>;
+}
+
+export function getActiveChapter(): Chapter {
+  const { activeChapter } = useChapter();
+  const chapters = useChapters();
+  return chapters.items[activeChapter.id];
 }

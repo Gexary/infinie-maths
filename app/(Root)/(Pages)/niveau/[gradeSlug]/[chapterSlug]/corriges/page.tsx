@@ -6,5 +6,5 @@ const PDFViewer = dynamic(() => import("@/components/app/pdf-viewer"), {
 });
 
 export default function Page() {
-  return <PDFViewer type="course" />;
+  return <PDFViewer type="correction" />;
 }
