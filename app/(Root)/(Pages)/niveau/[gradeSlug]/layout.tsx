@@ -6,7 +6,6 @@ import { chapters, gradeLevels } from "@/db/schemas/app";
 import type { Chapter, ChapterId, DBChapter } from "@/types/global";
 import { asc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { convertToSlug } from "@/lib/slug";
 
 function buildChaptersCollection(rows: Omit<DBChapter, "createdAt" | "updatedAt" | "position" | "gradeId">[]) {
   const items: Record<ChapterId, Chapter> = {};
@@ -23,10 +22,8 @@ function buildChaptersCollection(rows: Omit<DBChapter, "createdAt" | "updatedAt"
 
 export default async function GradeLevelLayout({ children, params }: Readonly<{ params: Promise<{ gradeSlug: string }>; children: React.ReactNode }>) {
   let { gradeSlug } = await params;
-  gradeSlug = convertToSlug(gradeSlug);
 
   const gradeId = await db.select({ id: gradeLevels.id }).from(gradeLevels).where(eq(gradeLevels.slug, gradeSlug)).limit(1);
-
   if (gradeId.length === 0) return redirect("/");
 
   const chapterList = await db
