@@ -19,8 +19,8 @@ export default function Page() {
 
       {/* Grade Information */}
       <h1 className="text-center text-3xl font-bold text-white relative">
-        <div className="absolute top-1/2 left-1/2 w-2xl h-16 bg-blue-500 blur-3xl rounded-[100%] opacity-40 -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 w-2xl h-16 bg-blue-500 blur-3xl rounded-[100%] opacity-40 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none">
           <GridBackground width={800} height={600} cellSize={32} borderColor="rgba(255,255,255,0.05)" />
         </div>
         <StylizedText text={activeGrade.title} />
