@@ -37,6 +37,8 @@ export function PremiumPlan() {
           <PixelGridBackground color="#ffcf0f" cols={68} />
         </div>
         <div className="absolute inset-0 shadow-[inset_0_-32px_128px_-32px_#ffcf0f40]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90%] h-0.5 bg-[linear-gradient(to_right,#ffcd2a00_0%,#ffcd2a_25%,#fffcdf_50%,#ffcd2a_85%,#ffcd2a00_100%)]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50%] h-1 bg-[linear-gradient(to_right,#ffcd2a00_0%,#ffcd2a_25%,#fffcdf_50%,#ffcd2a_85%,#ffcd2a00_100%)] blur-lg" />
       </div>
 
       {/* Content */}
@@ -47,7 +49,7 @@ export function PremiumPlan() {
             En mode Premium, tu bénéficies de contrôles corrigés supplémentaires, d'exercices plus approfondis et de fiches de révision ainsi que de ressources organisées pour chaque chapitre, de la Seconde à la Terminale.
           </p>
         </div>
-        <button className="bg-yellow-500 text-gray-950 rounded-full px-8 py-2 text-base font-bold cursor-pointer">Découvrez le plan Premium</button>
+        <button className="bg-linear-to-tl via-yellow-500 to-yellow-400 from-yellow-600 text-gray-950 rounded-full px-8 py-2 text-base font-bold cursor-pointer border border-yellow-200/20">Découvrez le plan Premium</button>
       </div>
     </motion.div>
   );
