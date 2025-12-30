@@ -14,11 +14,13 @@ export interface GradeLevelContextProps {
   };
 }
 
-const GradeLevelContext = createContext<GradeLevelContextProps | null>(null);
+const GradeLevelContext = createContext<GradeLevelContextProps>({
+  chapters: { items: {}, order: [], iterateOver: () => null },
+  activeGrade: { id: "", slug: "" },
+});
 
 export function useGradeLevel() {
   const context = useContext(GradeLevelContext);
-  if (!context) throw new Error("useGradeLevel must be used within a GradeLevelProvider");
   return context;
 }
 

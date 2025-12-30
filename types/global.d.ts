@@ -35,8 +35,10 @@ export interface OrderedCollection<ID, T> {
 }
 
 export type ChaptersCollection = OrderedCollection<ChapterId, Chapter>;
-export type GradesCollection = OrderedCollection<GradeId, Grade>; // JSON file grade_levels.json
-export type ChaptersByGrade = Record<GradeId, ChapterId[]>; // JSON file chapters.json
+export type GradesCollection = OrderedCollection<GradeId, Grade>;
+export type ChaptersByGrade = Record<GradeId, ChapterId[]>;
 
 export type DBChapter = typeof chapters.$inferSelect;
 export type DBGrade = typeof gradeLevels.$inferSelect;
+
+export type DataReturnType<T> = Promise<{ redirect: string } | T>;

@@ -41,6 +41,7 @@ export async function POST(req: Request) {
         hero: row.hero,
       };
     });
+
     return NextResponse.json(grade, { status: 201 });
   } catch (error) {
     console.error("Erreur lors de la création du niveau:", error);
@@ -70,6 +71,7 @@ export async function PATCH(req: Request) {
         hero: row.hero,
       };
     });
+
     return NextResponse.json(grade, { status: 200 });
   } catch (error) {
     console.error("Erreur lors de la modification du niveau:", error);
@@ -83,6 +85,7 @@ export async function DELETE(req: Request) {
   try {
     const rows = await db.delete(gradeLevels).where(eq(gradeLevels.id, id));
     if (rows.rowCount === 0) return NextResponse.json({ error: "Niveau introuvable" }, { status: 404 });
+
     return NextResponse.json({ id }, { status: 200 });
   } catch (error) {
     console.error("Erreur lors de la suppression du niveau:", error);

@@ -1,6 +1,9 @@
 import PixelGridBackground from "@/components/effects/PixelGridBackground";
+import { useApp } from "@/contexts/app-context";
+import { getActiveGrade, useGradeLevel } from "@/contexts/grade-level-context";
 import type { Variants } from "motion";
 import { motion } from "motion/react";
+import { useParams } from "next/navigation";
 
 const animationVariants: Variants = {
   initial: {
@@ -24,6 +27,8 @@ export const subscriptionStyle = {
 };
 
 export function PremiumPlan() {
+  const activeGrade = getActiveGrade();
+
   return (
     <motion.div {...animationVariants} custom={0} className="w-full p-4 md:p-6 2xl:p-8 rounded-xl relative overflow-hidden bg-yellow-500/10 border border-yellow-400/20">
       {/* Effects */}
@@ -31,13 +36,16 @@ export function PremiumPlan() {
         <div className="absolute bottom-0 left-0 w-full overflow-hidden opacity-20">
           <PixelGridBackground color="#ffcf0f" cols={68} />
         </div>
+        <div className="absolute inset-0 shadow-[inset_0_-32px_128px_-32px_#ffcf0f40]" />
       </div>
 
       {/* Content */}
-      <div className="max-w-xl mx-auto text-center">
-        <div className="space-y-2 mb-8">
-          <h1 className="font-bold text-xl md:text-3xl">Pass Premium - Terminale</h1>
-          <p className="text-white text-sm leading-relaxed">Avec le Premium, tu auras accès à plus de sujets type bac corrigés, des exercices supplémentaires, et des fiches de révision pour chaque chapitre de Terminale.</p>
+      <div className="max-w-3xl mx-auto text-center">
+        <div className="space-y-2 mb-6">
+          <h1 className="font-bold text-xl md:text-3xl">Pass Premium{activeGrade ? ` - ${activeGrade.name}` : ""}</h1>
+          <p className="text-white text-sm leading-relaxed">
+            En mode Premium, tu bénéficies de contrôles corrigés supplémentaires, d'exercices plus approfondis et de fiches de révision ainsi que de ressources organisées pour chaque chapitre, de la Seconde à la Terminale.
+          </p>
         </div>
         <button className="bg-yellow-500 text-gray-950 rounded-full px-8 py-2 text-base font-bold cursor-pointer">Découvrez le plan Premium</button>
       </div>
