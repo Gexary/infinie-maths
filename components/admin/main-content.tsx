@@ -31,7 +31,7 @@ export function MainContent({ children, variant, itemCount, openFunc }: Readonly
   const Icon = variants[variant].icon;
 
   return (
-    <main className="w-full flex py-8 px-8 md:px-32 gap-8 flex-col items-center">
+    <main className="w-full flex py-8 px-4 pl-8! md:px-32 gap-8 flex-col items-center">
       <section className="w-full max-w-4xl">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">

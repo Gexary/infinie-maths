@@ -65,13 +65,13 @@ export function GradeFormDialog() {
 
   return (
     <Dialog {...dialogProps}>
-      <DialogContent className="max-w-7xl! overflow-y-auto bg-card">
+      <DialogContent className="max-w-7xl! overflow-y-auto bg-card max-md:fixed! max-md:top-8!">
         <DialogHeader>
           <DialogTitle className="text-foreground">{dialogData ? "Modifier la classe" : "Nouvelle classe"}</DialogTitle>
           <DialogDescription className="text-muted-foreground">{dialogData ? "Modifiez les informations de cette classe." : "Créez une nouvelle classe pour organiser vos cours."}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
               <InputWithSlug inputName="name" slugName="slug" control={control} displayName="Nom" getFieldState={getFieldState} setValue={setValue} />
               <FormController name="title" control={control} displayName="Titre" />

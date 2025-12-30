@@ -6,7 +6,7 @@ import Link from "next/link";
 function Header({ title, subtitle, variant }: { title: string; subtitle: string; variant?: Variant }) {
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-      <div className="container max-w-4xl py-6 px-32">
+      <div className="container max-w-4xl py-6 md:px-32 px-4">
         <div className="flex items-center gap-3">
           {variant === "chapter" ? (
             <Link href={`/admin`} className="size-10 inline-flex items-center justify-center rounded-xl bg-gray-500/10 hover:bg-gray-500/15">
