@@ -5,6 +5,7 @@ import NoticeCard from "@/components/app/notice-card";
 import { PremiumPlan } from "@/components/app/premium";
 import StylizedText from "@/components/app/stylized-text";
 import { useApp } from "@/contexts/app-context";
+import GridBackground from "../../../components/effects/GridBackground";
 
 const HOME_PAGE_NOTICE = `#Comment fonctionne InfinieMaths
 --
@@ -25,6 +26,9 @@ export default function Page() {
       {/* Grade Levels Selection Section */}
       <h1 className="text-center text-3xl font-bold text-white relative">
         <div className="absolute top-1/2 left-1/2 w-xl h-16 bg-blue-500 blur-3xl rounded-[100%] opacity-40 -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <GridBackground width={800} height={600} cellSize={32} borderColor="rgba(255,255,255,0.05)"/>
+        </div>
         Choisis ton niveau
       </h1>
       <StylizedText text="Chaque parcours te guide pas à pas, du cours aux exercices corrigés." className="mt-4 text-center text-sm leading-relaxed" />

@@ -11,7 +11,7 @@ export default function CourseCard({ index, chapter }: { index: number; chapter:
 
   return (
     <motion.div
-      className="group cursor-pointer rounded-xl border border-gray-800 bg-gray-950 p-6 transition-colors duration-200 ease-in-out hover:border-blue-500 md:p-6"
+      className="group cursor-pointer rounded-xl border border-gray-800 bg-gray-950 p-6 transition-colors duration-200 ease-in-out hover:border-blue-500 md:p-6 z-10"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
