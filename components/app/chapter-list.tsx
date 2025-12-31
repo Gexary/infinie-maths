@@ -2,16 +2,20 @@
 
 import { useChapter } from "@/contexts/chapter-context";
 import { useChapters, useGradeLevel } from "@/contexts/grade-level-context";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ArrowUpRightIcon, ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ChapterList() {
   const { iterateOver } = useChapters();
   const { activeChapter } = useChapter();
   const { activeGrade } = useGradeLevel();
 
-  const [collapsed, setCollapsed] = useState(false);
+  const chapterRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
+  const [collapsed, setCollapsed] = useState(true);
   const toggleCollapsed = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setCollapsed((prev) => {
@@ -33,19 +37,31 @@ export function ChapterList() {
     });
   };
 
-  const chapterRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (chapterRef.current) {
+      if (isMobile) {
+        chapterRef.current.style.maxHeight = `0px`;
+      } else {
+        chapterRef.current.style.maxHeight = `${chapterRef.current.scrollHeight}px`;
+        setCollapsed(false);
+      }
+    }
+  }, [collapsed]);
 
   return (
     <div className="min-w-80 relative z-10 lg:max-w-xs h-fit overflow-hidden bg-gray-950 rounded-md border border-gray-800">
       <div className="w-full">
         <div className="shadow-[0_1px_0_0_var(--color-gray-800)] flex items-center justify-between text-blue-500 px-6 py-4 bg-blue-500/10">
           <h2 className="font-semibold text-lg">Chapitres</h2>
-          <Link className="flex items-center justify-center size-8 rounded-md transition hover:bg-blue-100/5 cursor-pointer" href={`/niveau/${activeGrade.slug}`}>
-            <ArrowUpRightIcon className="size-5" />
-          </Link>
-          {/* <button onClick={toggleCollapsed} className="flex items-center justify-center size-8 rounded-md transition hover:bg-blue-100/5 cursor-pointer">
-            <ChevronDownIcon className={`size-5 transition-transform duration-300 ease-in-out ${collapsed ? "rotate-180" : ""}`} />
-          </button> */}
+          {isMobile ? (
+            <button onClick={toggleCollapsed} className="flex items-center justify-center size-8 rounded-md transition hover:bg-blue-100/5 cursor-pointer">
+              <ChevronDownIcon className={`size-5 transition-transform duration-300 ease-in-out ${collapsed ? "rotate-180" : ""}`} />
+            </button>
+          ) : (
+            <Link className="flex items-center justify-center size-8 rounded-md transition hover:bg-blue-100/5 cursor-pointer" href={`/niveau/${activeGrade.slug}`}>
+              <ArrowUpRightIcon className="size-5" />
+            </Link>
+          )}
         </div>
         <div ref={chapterRef} className="divide-y divide-gray-800 transition-all duration-1000 ease-in-out overflow-hidden">
           {iterateOver(({ slug, title }) => {

@@ -20,7 +20,7 @@ function createHiddenIframe(url: string) {
   return iframe;
 }
 
-export default function usePrint(pdfUrl: string) {
+export function usePrintUrl(pdfUrl: string) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -36,6 +36,41 @@ export default function usePrint(pdfUrl: string) {
       iframeRef.current = null;
     };
   }, [pdfUrl]);
+
+  const handlePrint = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (!iframe?.contentWindow) return;
+
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  }, []);
+
+  return handlePrint;
+}
+
+export function usePrintBlob(blob: Blob | null | string) {
+  const blobUrl = useRef<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    if (!blob) return;
+
+    if (typeof blob === "string") {
+      blobUrl.current = blob;
+    } else {
+      blobUrl.current = URL.createObjectURL(blob);
+    }
+
+    const iframe = createHiddenIframe(blobUrl.current);
+    iframeRef.current = iframe;
+    document.body.appendChild(iframe);
+
+    return () => {
+      if (iframeRef.current?.parentNode) iframeRef.current.parentNode.removeChild(iframeRef.current);
+      iframeRef.current = null;
+      if (blobUrl.current) URL.revokeObjectURL(blobUrl.current);
+    };
+  }, [blob]);
 
   const handlePrint = useCallback(() => {
     const iframe = iframeRef.current;

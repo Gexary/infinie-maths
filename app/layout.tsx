@@ -8,7 +8,7 @@ import { Analytics } from "@vercel/analytics/next";
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${sans.variable} ${mono.variable} antialiased bg-gray-900`}>
+      <body className={`${sans.variable} ${mono.variable} antialiased bg-gray-900 custom-scrollbar`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />

@@ -151,3 +151,20 @@
   content: "";
   @apply absolute size-64 right-0 bottom-0 bg-blue-500 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl opacity-10;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-gray-950);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-gray-700);
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-600);
+}
