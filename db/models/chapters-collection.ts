@@ -44,3 +44,36 @@ export async function getChaptersCollection(gradeSlug: string): DataReturnType<{
 
   return { gradeId, chaptersCollection: buildChaptersCollection(chapterList) };
 }
+
+export async function getAdminGradeInfo(gradeSlug: string) {
+  const gradeRows = await db.select({ id: gradeLevels.id, slug: gradeLevels.slug }).from(gradeLevels).where(eq(gradeLevels.slug, gradeSlug)).limit(1);
+  if (gradeRows.length === 0) return { redirect: "/admin" };
+  return gradeRows[0];
+}
+
+export async function getAdminChaptersData(gradeSlug: string) {
+  const activeGradeData = await getAdminGradeInfo(gradeSlug);
+  if ("redirect" in activeGradeData) return activeGradeData;
+
+  const rows = await db.select().from(chapters).where(eq(chapters.gradeId, activeGradeData.id)).orderBy(asc(chapters.position));
+
+  const chaptersData: ChaptersCollection = {
+    items: {},
+    order: [],
+  };
+
+  for (const chapter of rows) {
+    chaptersData.items[chapter.id] = {
+      title: chapter.title,
+      description: chapter.description,
+      annotation: chapter.annotation,
+      slug: chapter.slug,
+      coursePDFUrl: chapter.coursePDFUrl,
+      correctionsPDFUrl: chapter.correctionsPDFUrl,
+      videoUrl: chapter.videoUrl,
+    };
+    chaptersData.order.push(chapter.id);
+  }
+
+  return { chaptersData, activeGradeData };
+}

@@ -1,6 +1,6 @@
 "use server";
 
-import type { DBGrade, Grade, GradeId } from "@/types/global";
+import type { DBGrade, Grade, GradeId, GradesCollection } from "@/types/global";
 import { gradeLevels } from "@/db/schemas/app";
 import { db } from "@/db";
 import { asc } from "drizzle-orm";
@@ -34,4 +34,27 @@ export async function getGradesCollection() {
     .orderBy(asc(gradeLevels.position));
 
   return buildGradesCollection(rows);
+}
+
+export async function getAdminGradesCollection() {
+  const grades = await db.select().from(gradeLevels).orderBy(asc(gradeLevels.position));
+
+  const gradesCollection: GradesCollection = {
+    items: {},
+    order: [],
+  };
+
+  for (const grade of grades) {
+    gradesCollection.items[grade.id] = {
+      name: grade.name,
+      slug: grade.slug,
+      title: grade.title,
+      description: grade.description,
+      summary: grade.summary,
+      hero: grade.hero ?? null,
+    };
+    gradesCollection.order.push(grade.id);
+  }
+
+  return gradesCollection;
 }
