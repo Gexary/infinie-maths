@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { GripVertical, EditIcon, Trash2Icon } from "lucide-react";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { useAdmin } from "@/contexts/admin/admin-context";
-import StylizedText from "../../app/stylized-text";
+import StylizedText from "@/components/app/stylized-text";
 
 export default function GradeCard({ grade, gradeId, index }: { grade: Grade; gradeId: GradeId; index: number }) {
   const { ref, handleRef, isDragging } = useSortable({
