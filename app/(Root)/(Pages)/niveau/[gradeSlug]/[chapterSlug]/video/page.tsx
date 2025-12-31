@@ -3,10 +3,10 @@ import { TableOfContents } from "@/components/app/table-of-contents";
 export default function Page() {
   return (
     <div className="w-full">
-      <div className="mb-4 flex flex-row items-center justify-between gap-2">
-        <TableOfContents />
+      <TableOfContents />
+      <div>
+        <p>Fonctionnalité de lecture PDF non disponible pour le moment</p>
       </div>
-      <div>Fonctionnalité non encore implémentée</div>
     </div>
   );
 }
