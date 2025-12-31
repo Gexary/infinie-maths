@@ -60,10 +60,10 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 h-16 w-full bg-gray-950 flex flex-row justify-between items-center px-4 md:px-8 lg:px-16 border-b border-gray-800">
         <div className="flex flex-row items-center gap-4">
-          <div className="flex flex-row items-center gap-2">
+          <Link href={"/"} className="flex flex-row items-center gap-2">
             <Image src="/logo.png" alt="Logo" width={40} height={40} className="size-8" />
             <span className="text-xl font-bold">InfinieMaths</span>
-          </div>
+          </Link>
           <span className="text-gray-300 hidden lg:inline-block">Les maths du lycée, simplement.</span>
         </div>
         <div className="flex-row gap-4 items-center hidden md:flex">
