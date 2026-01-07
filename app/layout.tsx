@@ -1,4 +1,5 @@
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { mono, sans } from "@/lib/fonts";
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />
+          <SpeedInsights />
         </ThemeProvider>
         <SpeedInsights />
         <Analytics />
